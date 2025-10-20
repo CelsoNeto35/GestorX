@@ -4,9 +4,12 @@
  */
 package br.com.gestorx.api.Dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -16,12 +19,15 @@ public class EstoqueDto {
     private long Id;
     private String categoria;
     private String marcaModelo;
-    private String quantidadeDisponivel;
+    private BigDecimal quantidadeDisponivel;
     private String lote;
-    private String validade;
-    private String precoDeCusto;
-    private String precoDeVenda;
-    private String margemDeLucro;
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private Date validade;
+    private BigDecimal precoDeCusto;
+    private BigDecimal precoDeVenda;
+    private BigDecimal margemDeLucro;
     private Long produtoId;
     private String produtoDescricao;
 
@@ -49,11 +55,11 @@ public class EstoqueDto {
         this.marcaModelo = marcaModelo;
     }
 
-    public String getQuantidadeDisponivel() {
+    public BigDecimal getQuantidadeDisponivel() {
         return quantidadeDisponivel;
     }
 
-    public void setQuantidadeDisponivel(String quantidadeDisponivel) {
+    public void setQuantidadeDisponivel(BigDecimal quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
     }
 
@@ -65,35 +71,35 @@ public class EstoqueDto {
         this.lote = lote;
     }
 
-    public String getValidade() {
+    public Date getValidade() {
         return validade;
     }
 
-    public void setValidade(String validade) {
+    public void setValidade(Date validade) {
         this.validade = validade;
     }
 
-    public String getPrecoDeCusto() {
+    public BigDecimal getPrecoDeCusto() {
         return precoDeCusto;
     }
 
-    public void setPrecoDeCusto(String precoDeCusto) {
+    public void setPrecoDeCusto(BigDecimal precoDeCusto) {
         this.precoDeCusto = precoDeCusto;
     }
 
-    public String getPrecoDeVenda() {
+    public BigDecimal getPrecoDeVenda() {
         return precoDeVenda;
     }
 
-    public void setPrecoDeVenda(String precoDeVenda) {
+    public void setPrecoDeVenda(BigDecimal precoDeVenda) {
         this.precoDeVenda = precoDeVenda;
     }
 
-    public String getMargemDeLucro() {
+    public BigDecimal getMargemDeLucro() {
         return margemDeLucro;
     }
 
-    public void setMargemDeLucro(String margemDeLucro) {
+    public void setMargemDeLucro(BigDecimal margemDeLucro) {
         this.margemDeLucro = margemDeLucro;
     }
 

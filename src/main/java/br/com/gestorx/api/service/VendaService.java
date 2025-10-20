@@ -1,172 +1,174 @@
+// ==================== VENDA SERVICE ====================
 package br.com.gestorx.api.service;
 
-import br.com.gestorx.api.Dto.VendaDto;
-import br.com.gestorx.api.Dto.ItemVendasDto;
-import br.com.gestorx.api.model.*;
-import br.com.gestorx.api.repository.*;
+import br.com.gestorx.api.model.Venda;
+import br.com.gestorx.api.model.ItemVendas;
+import br.com.gestorx.api.model.Estoque;
+import br.com.gestorx.api.model.Cliente;
+import br.com.gestorx.api.repository.VendaRepository;
+import br.com.gestorx.api.repository.EstoqueRepository;
+import br.com.gestorx.api.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class VendaService {
 
     @Autowired
     private VendaRepository vendaRepository;
 
     @Autowired
-    private ItemVendasRepository itemVendasRepository;
+    private EstoqueRepository estoqueRepository;
 
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @Autowired
-    private EstoqueRepository estoqueRepository;
-
-    @Autowired
-    private ProdutoRepository produtoRepository;
-
-    public List<VendaDto> listarVendas() {
-        return vendaRepository.findAll().stream().map(venda -> {
-            VendaDto dto = new VendaDto();
-            dto.setId(venda.getId());
-            dto.setDataDaVenda(venda.getDataDaVenda());
-            dto.setHoraDaVenda(venda.getHoraDaVenda());
-            dto.setPrecoTotal(venda.getPrecoTotal());
-            dto.setDescontoAplicado(venda.getDescontoAplicado());
-            dto.setFormaDePagamento(venda.getFormaDePagamento());
-            dto.setCondicaoDePagamento(venda.getCondicaoDePagamento());
-
-            if (venda.getCliente() != null) {
-                dto.setClienteId(venda.getCliente().getId());
-                dto.setClienteNome(venda.getCliente().getNome());
-            }
-
-            if (venda.getItens() != null) {
-                dto.setItens(
-                        venda.getItens().stream().map(item -> {
-                            ItemVendasDto i = new ItemVendasDto();
-                            i.setId(item.getId());
-                            i.setEstoqueId(item.getEstoque().getId());
-                            i.setProdutoDescricao(item.getEstoque().getProduto().getDescricao());
-                            i.setQuantidade(item.getQuantidade());
-                            i.setPrecoUnitario(item.getPrecoUnitario());
-                            i.setSubtotal(item.getSubtotal());
-                            i.setLote(item.getEstoque().getLote());
-                            return i;
-                        }).collect(Collectors.toList())
-                );
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public boolean cadastrarVenda(VendaDto dados) {
+    public Venda salvar(Venda venda) {
         try {
-            Venda venda = new Venda();
-            venda.setDataDaVenda(dados.getDataDaVenda());
-            venda.setHoraDaVenda(dados.getHoraDaVenda());
-            venda.setDescontoAplicado(dados.getDescontoAplicado());
-            venda.setFormaDePagamento(dados.getFormaDePagamento());
-            venda.setCondicaoDePagamento(dados.getCondicaoDePagamento());
-
-            // Associa o cliente
-            if (dados.getClienteId() != null) {
-                clienteRepository.findById(dados.getClienteId())
-                        .ifPresent(venda::setCliente);
+            // Validar e buscar cliente
+            if (venda.getCliente() == null || venda.getCliente().getId() == null) {
+                throw new RuntimeException("Cliente não selecionado");
             }
+            
+            Cliente cliente = clienteRepository.findById(venda.getCliente().getId())
+                    .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+            venda.setCliente(cliente);
 
-            List<ItemVendas> itens = new ArrayList<>();
-            BigDecimal total = BigDecimal.ZERO;
-
-            // ========== PROCESSAR ITENS ==========
-            for (ItemVendasDto itemDto : dados.getItens()) {
-                Optional<Estoque> estoqueOpt = estoqueRepository.findById(itemDto.getEstoqueId());
-                if (estoqueOpt.isEmpty()) continue;
-
-                Estoque estoque = estoqueOpt.get();
-                BigDecimal qtdVendida = itemDto.getQuantidade();
-
-                // Verifica estoque disponível
-                if (estoque.getQuantidadeDisponivel().compareTo(qtdVendida) < 0) {
-                    throw new IllegalArgumentException(
-                            "Quantidade insuficiente no estoque para o produto: " +
-                                    estoque.getProduto().getDescricao()
-                    );
+            // Processar itens
+            if (venda.getItens() != null && !venda.getItens().isEmpty()) {
+                List<ItemVendas> itensProcessados = new ArrayList<>();
+                
+                for (ItemVendas item : venda.getItens()) {
+                    // Buscar estoque pelo ID
+                    if (item.getEstoque() == null || item.getEstoque().getId() == null) {
+                        continue; // Pular itens sem estoque
+                    }
+                    
+                    Estoque estoque = estoqueRepository.findById(item.getEstoque().getId())
+                            .orElseThrow(() -> new RuntimeException("Estoque não encontrado: " + item.getEstoque().getId()));
+                    
+                    // Validar quantidade disponível
+                    if (estoque.getQuantidadeDisponivel().compareTo(item.getQuantidade()) < 0) {
+                        throw new RuntimeException("Quantidade insuficiente em estoque para: " + estoque.getMarcaModelo());
+                    }
+                    
+                    // Atualizar item com dados do estoque
+                    item.setEstoque(estoque);
+                    if (item.getPrecoVenda() == null || item.getPrecoVenda().compareTo(BigDecimal.ZERO) == 0) {
+                        item.setPrecoVenda(estoque.getPrecoDeVenda());
+                    }
+                    item.setVenda(venda);
+                    
+                    itensProcessados.add(item);
                 }
-
-                // Cria item da venda
-                ItemVendas item = new ItemVendas();
-                item.setVenda(venda);
-                item.setEstoque(estoque);
-                item.setQuantidade(qtdVendida);
-                item.setPrecoUnitario(estoque.getPrecoDeVenda());
-                itens.add(item);
-
-                // Calcula subtotal e soma ao total
-                total = total.add(item.getSubtotal());
-
-                // 🔻 DÁ BAIXA NO ESTOQUE
-                BigDecimal novaQtd = estoque.getQuantidadeDisponivel().subtract(qtdVendida);
-                estoque.setQuantidadeDisponivel(novaQtd);
-                estoqueRepository.save(estoque);
+                
+                venda.setItens(itensProcessados);
             }
 
-            venda.setItens(itens);
-            venda.setPrecoTotal(total);
+            // Validar dados obrigatórios
+            if (venda.getId() == null) {
+                venda.setDataVenda(LocalDateTime.now());
+            }
+            
+            if (venda.getFormaPagamento() == null) {
+                throw new RuntimeException("Forma de pagamento não selecionada");
+            }
+            
+            if (venda.getCondicaoPagamento() == null) {
+                throw new RuntimeException("Condição de pagamento não selecionada");
+            }
 
-            vendaRepository.save(venda);
-            return true;
-
+            // Calcular totais
+            calcularTotais(venda);
+            
+            return vendaRepository.save(venda);
+            
         } catch (Exception e) {
-            System.err.println("❌ Erro ao cadastrar venda: " + e.getMessage());
-            throw e;
+            throw new RuntimeException("Erro ao salvar venda: " + e.getMessage(), e);
         }
     }
 
-    public List<Map<String, Object>> autocompleteProdutos() {
-        return estoqueRepository.findAll().stream().map(estoque -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", estoque.getId());
-            map.put("produtoDescricao", estoque.getProduto().getDescricao());
-            map.put("precoVenda", estoque.getPrecoDeVenda());
-            map.put("quantidadeDisponivel", estoque.getQuantidadeDisponivel());
-            map.put("lote", estoque.getLote()); // já estava puxando o lote ✅
-            return map;
-        }).collect(Collectors.toList());
-    }
-    public List<Map<String, Object>> listarClientes() {
-        return clienteRepository.findAll().stream().map(cliente -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", cliente.getId());
-            map.put("nome", cliente.getNome());
-            map.put("cpfCnpj", cliente.getCpfCnpj());
-            map.put("telefone", cliente.getTelefone());
-            return map;
-        }).collect(Collectors.toList());
+    public void calcularTotais(Venda venda) {
+        BigDecimal subtotal = BigDecimal.ZERO;
+        
+        if (venda.getItens() != null && !venda.getItens().isEmpty()) {
+            for (ItemVendas item : venda.getItens()) {
+                if (item.getQuantidade() != null && item.getPrecoVenda() != null) {
+                    subtotal = subtotal.add(item.getSubtotal());
+                }
+            }
+        }
+        
+        BigDecimal desconto = venda.getDesconto() != null ? venda.getDesconto() : BigDecimal.ZERO;
+        
+        // Garantir que desconto não seja maior que o subtotal
+        if (desconto.compareTo(subtotal) > 0) {
+            desconto = subtotal;
+        }
+        
+        BigDecimal total = subtotal.subtract(desconto);
+        
+        // Garantir que o total nunca seja negativo
+        if (total.compareTo(BigDecimal.ZERO) < 0) {
+            total = BigDecimal.ZERO;
+        }
+        
+        venda.setPrecoTotal(total);
     }
 
-    public boolean excluirVenda(Long id) {
-        return vendaRepository.findById(id)
-                .map(venda -> {
-                    // Reverte o estoque antes de excluir
-                    if (venda.getItens() != null) {
-                        for (ItemVendas item : venda.getItens()) {
-                            Estoque est = item.getEstoque();
-                            est.setQuantidadeDisponivel(
-                                    est.getQuantidadeDisponivel().add(item.getQuantidade())
-                            );
-                            estoqueRepository.save(est);
-                        }
-                    }
-                    vendaRepository.delete(venda);
-                    return true;
-                }).orElse(false);
+    public Venda atualizar(Long id, Venda vendaAtualizada) {
+        Optional<Venda> vendaExistente = vendaRepository.findById(id);
+        if (!vendaExistente.isPresent()) {
+            throw new RuntimeException("Venda não encontrada");
+        }
+        
+        Venda venda = vendaExistente.get();
+        
+        // Atualizar dados básicos
+        if (vendaAtualizada.getCliente() != null && vendaAtualizada.getCliente().getId() != null) {
+            Cliente cliente = clienteRepository.findById(vendaAtualizada.getCliente().getId())
+                    .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+            venda.setCliente(cliente);
+        }
+        
+        venda.setFormaPagamento(vendaAtualizada.getFormaPagamento());
+        venda.setCondicaoPagamento(vendaAtualizada.getCondicaoPagamento());
+        venda.setDesconto(vendaAtualizada.getDesconto());
+        
+        // Atualizar itens
+        if (vendaAtualizada.getItens() != null) {
+            venda.setItens(vendaAtualizada.getItens());
+        }
+        
+        calcularTotais(venda);
+        return vendaRepository.save(venda);
+    }
+
+    public Optional<Venda> buscarPorId(Long id) {
+        return vendaRepository.findById(id);
+    }
+
+    public List<Venda> listar() {
+        return vendaRepository.findAll();
+    }
+
+    public List<Venda> buscarPorCliente(Long clienteId) {
+        return vendaRepository.findByClienteId(clienteId);
+    }
+
+    public void deletar(Long id) {
+        Optional<Venda> venda = vendaRepository.findById(id);
+        if (venda.isPresent()) {
+            venda.get().setAtivo(false);
+            vendaRepository.save(venda.get());
+        }
     }
 }

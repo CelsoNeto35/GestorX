@@ -186,7 +186,7 @@
                 <li class="nav-item"><a class="nav-link" href="/index">Painel</a></li>
                 <li class="nav-item"><a class="nav-link" href="/listarFaturamento">Faturamento</a></li>
                 <li class="nav-item"><a class="nav-link" href="/listarComissao">Comissão</a></li>
-                <li class="nav-item"><a class="nav-link" href="/VendaCadastrada">Vendas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/vendaCadastradas">Vendas</a></li>
                 <li class="nav-item"><a class="nav-link" href="/produtoCadastrados">Produtos</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/estoqueCadastrados">Estoque</a></li>
                 <li class="nav-item"><a class="nav-link" href="/clienteCadastrados">Clientes</a></li>
@@ -217,16 +217,14 @@
                         <table class="table table-striped table-hover align-middle text-center">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Categoria</th>
-                                    <th>Marca/Modelo</th>
+                                    <th>#</th>
+                                    <th>Produto</th>
+                                    <th>Fabricante</th>
                                     <th>Quantidade</th>
                                     <th>Lote</th>
                                     <th>Validade</th>
                                     <th>Preço de Custo</th>
                                     <th>Preço de Venda</th>
-                                    <th>Margem de Lucro</th>
-                                    <th>Produto</th>
                                     <th colspan="2" style="white-space: nowrap;">Ações</th>
                                 </tr>
                             </thead>
@@ -238,15 +236,13 @@
                                 </tr>
                                 <tr th:each="estoque : ${estoque}">
                                     <td th:text="${estoque.id}" data-label="ID"></td>
-                                    <td th:text="${estoque.categoria}" data-label="Categoria"></td>
+                                    <td th:text="${estoque.produtoDescricao}" data-label="Produto"></td>
                                     <td th:text="${estoque.marcaModelo}" data-label="Marca/Modelo"></td>
                                     <td th:text="${estoque.quantidadeDisponivel}" data-label="Quantidade"></td>
                                     <td th:text="${estoque.lote}" data-label="Lote"></td>
                                     <td th:text="${estoque.validade}" data-label="Validade"></td>
                                     <td th:text="${estoque.precoDeCusto}" data-label="Preço de Custo"></td>
                                     <td th:text="${estoque.precoDeVenda}" data-label="Preço de Venda"></td>
-                                    <td th:text="${estoque.margemDeLucro}" data-label="Margem de Lucro"></td>
-                                    <td th:text="${estoque.produtoDescricao}" data-label="Produto"></td>
                                     <td>
                                         <a th:href="@{'/estoque/editar/' + ${estoque.id}}" class="btn btn-warning btn-sm">
                                             <i class="bi bi-pencil-square"></i> Atualizar

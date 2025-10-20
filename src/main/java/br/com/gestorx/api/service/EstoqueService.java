@@ -5,6 +5,7 @@ import br.com.gestorx.api.model.Produto;
 import br.com.gestorx.api.repository.EstoqueRepository;
 import br.com.gestorx.api.repository.ProdutoRepository;
 import br.com.gestorx.api.Dto.EstoqueDto;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class EstoqueService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    // ============ LISTAR ============
+
     public List<EstoqueDto> listarEstoque() {
         List<Estoque> estoques = estoqueRepository.findAll();
         List<EstoqueDto> estoqueDtos = new ArrayList<>();
@@ -65,7 +66,12 @@ public class EstoqueService {
         estoque.setPrecoDeCusto(cadastro.getPrecoDeCusto());
         estoque.setPrecoDeVenda(cadastro.getPrecoDeVenda());
         estoque.setMargemDeLucro(cadastro.getMargemDeLucro());
-        geraValorLucro(cadastro);
+        
+        // Calcula a margem de lucro se não foi informada
+        if (estoque.getMargemDeLucro() == null || estoque.getMargemDeLucro().compareTo(BigDecimal.ZERO) == 0) {
+            estoque.setMargemDeLucro(calcularMargemDeLucro(estoque.getPrecoDeCusto(), estoque.getPrecoDeVenda()));
+        }
+
         System.out.println("cadastrarEstoque");
 
         // Vincula o produto selecionado
@@ -113,17 +119,14 @@ public class EstoqueService {
         estoqueRepository.save(estoque);
         return true;
     }
-    public double geraValorLucro(EstoqueDto dados) {
-    try {
-        // Converte de String para double
-        double precoCusto = Double.parseDouble(dados.getPrecoDeCusto());
-        double precoVenda = Double.parseDouble(dados.getPrecoDeVenda());
+
+    // ============ CALCULAR MARGEM DE LUCRO ============
+    private BigDecimal calcularMargemDeLucro(BigDecimal precoDeCusto, BigDecimal precoDeVenda) {
+        if (precoDeCusto == null || precoDeCusto.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
         
-        // Calcula lucro
-        return precoVenda - precoCusto;
-    } catch (NumberFormatException e) {
-        // Caso a string não seja um número válido
-        return 0.0;
+        BigDecimal lucro = precoDeVenda.subtract(precoDeCusto);
+        return lucro.divide(precoDeCusto, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
     }
-}
 }

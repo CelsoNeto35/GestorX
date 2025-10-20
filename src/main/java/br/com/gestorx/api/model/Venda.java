@@ -1,62 +1,81 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package br.com.gestorx.api.model;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.TemporalType;
+import br.com.gestorx.api.model.ItemVendas;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+/**
+ *
+ * @author cneto
+ */
 @Entity
-@Table(name = "venda")
+@Table(name = "vendas")
 public class Venda implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Venda_id")
+    @Column(name = "venda_id")
     private Long id;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "Venda_DataDaVenda", nullable = false)
-    private Date dataDaVenda;
+    @Column(name = "data_venda", nullable = false)
+    private LocalDateTime dataVenda;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "Venda_HoraDaVenda", nullable = false)
-    private Date horaDaVenda;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Cliente_id", referencedColumnName = "Cliente_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "Cliente_id", nullable = false)
     private Cliente cliente;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemVendas> itensVendas;
+    private List<ItemVendas> itens = new ArrayList<>();
 
-    @Column(name = "Venda_PrecoTotal", precision = 10, scale = 2)
-    private BigDecimal precoTotal;
+    @Column(name = "preco_total", nullable = false)
+    private BigDecimal precoTotal = BigDecimal.ZERO;
 
-    @Column(name = "Venda_DescontoAplicado")
-    private int descontoAplicado;
+    @Column(name = "desconto")
+    private BigDecimal desconto = BigDecimal.ZERO;
 
-    @Column(name = "Venda_FormaDePagamento", length = 50)
-    private String formaDePagamento;
+    @Column(name = "forma_pagamento", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FormaPagamento formaPagamento;
 
-    @Column(name = "Venda_CondicaoDePagamento", length = 50)
-    private String condicaoDePagamento;
+    @Column(name = "condicao_pagamento", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CondicaoPagamento condicaoPagamento;
+
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
+    // Construtores
     public Venda() {
     }
 
-    public Venda(Date dataDaVenda, Date horaDaVenda, Cliente cliente,
-                 List<ItemVendas> itens, BigDecimal precoTotal,
-                 int descontoAplicado, String formaDePagamento,
-                 String condicaoDePagamento) {
-        this.dataDaVenda = dataDaVenda;
-        this.horaDaVenda = horaDaVenda;
+    public Venda(Cliente cliente, FormaPagamento formaPagamento, CondicaoPagamento condicaoPagamento) {
         this.cliente = cliente;
-        this.setItens(itens);
-        this.precoTotal = precoTotal;
-        this.descontoAplicado = descontoAplicado;
-        this.formaDePagamento = formaDePagamento;
-        this.condicaoDePagamento = condicaoDePagamento;
+        this.dataVenda = LocalDateTime.now();
+        this.formaPagamento = formaPagamento;
+        this.condicaoPagamento = condicaoPagamento;
     }
+
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -65,20 +84,12 @@ public class Venda implements Serializable {
         this.id = id;
     }
 
-    public Date getDataDaVenda() {
-        return dataDaVenda;
+    public LocalDateTime getDataVenda() {
+        return dataVenda;
     }
 
-    public void setDataDaVenda(Date dataDaVenda) {
-        this.dataDaVenda = dataDaVenda;
-    }
-
-    public Date getHoraDaVenda() {
-        return horaDaVenda;
-    }
-
-    public void setHoraDaVenda(Date horaDaVenda) {
-        this.horaDaVenda = horaDaVenda;
+    public void setDataVenda(LocalDateTime dataVenda) {
+        this.dataVenda = dataVenda;
     }
 
     public Cliente getCliente() {
@@ -90,14 +101,11 @@ public class Venda implements Serializable {
     }
 
     public List<ItemVendas> getItens() {
-        return itensVendas;
+        return itens;
     }
 
     public void setItens(List<ItemVendas> itens) {
-        this.itensVendas = itens;
-        if (itens != null) {
-            itens.forEach(item -> item.setVenda(this)); // garante a relação bidirecional
-        }
+        this.itens = itens;
     }
 
     public BigDecimal getPrecoTotal() {
@@ -108,40 +116,53 @@ public class Venda implements Serializable {
         this.precoTotal = precoTotal;
     }
 
-    public int getDescontoAplicado() {
-        return descontoAplicado;
+    public BigDecimal getDesconto() {
+        return desconto;
     }
 
-    public void setDescontoAplicado(int descontoAplicado) {
-        this.descontoAplicado = descontoAplicado;
+    public void setDesconto(BigDecimal desconto) {
+        this.desconto = desconto;
     }
 
-    public String getFormaDePagamento() {
-        return formaDePagamento;
+    public FormaPagamento getFormaPagamento() {
+        return formaPagamento;
     }
 
-    public void setFormaDePagamento(String formaDePagamento) {
-        this.formaDePagamento = formaDePagamento;
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
+        this.formaPagamento = formaPagamento;
     }
 
-    public String getCondicaoDePagamento() {
-        return condicaoDePagamento;
+    public CondicaoPagamento getCondicaoPagamento() {
+        return condicaoPagamento;
     }
 
-    public void setCondicaoDePagamento(String condicaoDePagamento) {
-        this.condicaoDePagamento = condicaoDePagamento;
+    public void setCondicaoPagamento(CondicaoPagamento condicaoPagamento) {
+        this.condicaoPagamento = condicaoPagamento;
     }
-    @Override
-    public String toString() {
-        return "Venda{" +
-                "id=" + id +
-                ", dataDaVenda=" + dataDaVenda +
-                ", horaDaVenda=" + horaDaVenda +
-                ", cliente=" + (cliente != null ? cliente.getId() : null) +
-                ", precoTotal=" + precoTotal +
-                ", descontoAplicado=" + descontoAplicado +
-                ", formaDePagamento='" + formaDePagamento + '\'' +
-                ", condicaoDePagamento='" + condicaoDePagamento + '\'' +
-                '}';
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void adicionarItem(ItemVendas item) {
+        item.setVenda(this);
+        this.itens.add(item);
+    }
+
+    public void removerItem(ItemVendas item) {
+        this.itens.remove(item);
+        item.setVenda(null);
+    }
+
+    public BigDecimal calcularTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (ItemVendas item : itens) {
+            total = total.add(item.getSubtotal());
+        }
+        return total.subtract(desconto != null ? desconto : BigDecimal.ZERO);
     }
 }
