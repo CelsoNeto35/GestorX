@@ -19,7 +19,7 @@ public class EstoqueDto {
     private long Id;
     private String categoria;
     private String marcaModelo;
-    private BigDecimal quantidadeDisponivel;
+    private Integer quantidadeDisponivel;
     private String lote;
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -55,11 +55,11 @@ public class EstoqueDto {
         this.marcaModelo = marcaModelo;
     }
 
-    public BigDecimal getQuantidadeDisponivel() {
+    public Integer getQuantidadeDisponivel() {
         return quantidadeDisponivel;
     }
 
-    public void setQuantidadeDisponivel(BigDecimal quantidadeDisponivel) {
+    public void setQuantidadeDisponivel(Integer quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
     }
 

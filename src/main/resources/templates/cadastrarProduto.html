@@ -147,22 +147,22 @@
                         <input type="hidden" th:field="*{id}" />
 
                         <div class="form-group mb-3">
-                            <label for="descricao">Descrição *</label>
+                            <label for="descricao">Raça</label>
                             <input type="text" id="descricao" th:field="*{descricao}" class="form-control form-control-lg" required />
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="categoria">Categoria *</label>
+                            <label for="categoria">Categoria</label>
                             <input type="text" id="categoria" th:field="*{categoria}" class="form-control form-control-lg" required />
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="unidadeDeMedida">Unidade de Medida *</label>
-                            <input type="text" id="unidadeDeMedida" th:field="*{unidadeDeMedida}" class="form-control form-control-lg" placeholder="Ex: UN, CX, KG" required />
+                            <label for="unidadeDeMedida">Unidade de Medida</label>
+                            <input type="text" id="unidadeDeMedida" th:field="*{unidadeDeMedida}" class="form-control form-control-lg" placeholder="Ex: UN,KG" required />
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="fornecedorId">Fornecedor *</label>
+                            <label for="fornecedorId">Fornecedor</label>
                             <select id="fornecedorId" th:field="*{fornecedorId}" class="form-select form-select-lg" required>
                                 <option value="" selected>Selecione um fornecedor</option>
                                 <option th:each="fornecedor : ${fornecedores}" th:value="${fornecedor.id}" th:text="${fornecedor.nomeFantasia}"></option>

@@ -16,7 +16,6 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
@@ -66,7 +65,6 @@
             color: #fff;
         }
 
-        /* ===== MAIN CONTENT ===== */
         .content {
             margin-left: 250px;
             padding: 40px;
@@ -90,7 +88,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* ===== TABLE ===== */
         .table-hover tbody tr:hover {
             background-color: #f5f5f5;
         }
@@ -107,7 +104,33 @@
         .action-buttons { display: flex; gap: 5px; }
         .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 
-        /* ===== RESPONSIVIDADE ===== */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .modal-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 100%;
@@ -127,7 +150,6 @@
             }
 
             .sidebar .nav-item { margin: 5px; }
-
             .content { margin-left: 0; padding: 20px; }
         }
 
@@ -146,7 +168,6 @@
 </head>
 
 <body>
-    <!-- SIDEBAR -->
     <nav class="sidebar">
         <div>
             <a class="navbar-brand" href="/index">GestorX</a>
@@ -169,7 +190,6 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <div class="content">
         <div class="container">
             <div class="card shadow mb-4">
@@ -221,9 +241,12 @@
                                     <td th:text="'R$ ' + ${#numbers.formatDecimal(venda.precoTotal, 1, 2, 'POINT')}" data-label="Total"></td>
                                     <td data-label="Ações">
                                         <div class="action-buttons">
-                                            <a th:href="@{/venda/{id}/detalhes(id=${venda.id})}" class="btn btn-info btn-sm" title="Visualizar">
+                                            <button type="button" class="btn btn-info btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    th:data-bs-target="'#viewModal' + ${venda.id}" 
+                                                    title="Visualizar">
                                                 <i class="bi bi-eye"></i>
-                                            </a>
+                                            </button>
                                             <a th:href="@{/venda/{id}/editar(id=${venda.id})}" class="btn btn-warning btn-sm" title="Editar">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
@@ -240,4 +263,116 @@
                         </table>
                     </div>
                 </div>
-            </
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização -->
+    <div th:each="venda : ${vendas}" class="modal fade" th:id="'viewModal' + ${venda.id}" 
+         tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-eye"></i> Detalhes da Venda #<span th:text="${venda.id}"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Informações da Venda</h6>
+                            <div class="info-row">
+                                <span class="info-label">Data:</span>
+                                <span class="info-value" th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm')}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Cliente:</span>
+                                <span class="info-value" th:text="${venda.cliente.nomeCompletoRazaoSocial}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Forma de Pagamento:</span>
+                                <span class="info-value" th:text="${venda.formaPagamento.descricao}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Condição:</span>
+                                <span class="info-value" th:text="${venda.condicaoPagamento.descricao}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Valores</h6>
+                            <div class="info-row">
+                                <span class="info-label">Subtotal:</span>
+                                <span class="info-value" th:text="'R$ ' + ${#numbers.formatDecimal(venda.precoTotal + venda.desconto, 1, 2, 'POINT')}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Desconto:</span>
+                                <span class="info-value text-danger" th:text="'- R$ ' + ${#numbers.formatDecimal(venda.desconto, 1, 2, 'POINT')}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label fw-bold fs-5">Total:</span>
+                                <span class="info-value fw-bold text-success fs-5" th:text="'R$ ' + ${#numbers.formatDecimal(venda.precoTotal, 1, 2, 'POINT')}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6 class="fw-bold mb-3">Itens da Venda</h6>
+                    <div th:if="${venda.itens.isEmpty()}" class="alert alert-warning">
+                        Nenhum item cadastrado nesta venda.
+                    </div>
+                    <div th:each="item : ${venda.itens}" class="modal-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <strong th:text="${item.estoque.marcaModelo}"></strong>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <small class="text-muted">Qtd:</small>
+                                <span th:text="${#numbers.formatDecimal(item.quantidade, 1, 2, 'POINT')}"></span>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <small class="text-muted">Unit:</small>
+                                <span th:text="'R$ ' + ${#numbers.formatDecimal(item.precoVenda, 1, 2, 'POINT')}"></span>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <strong th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2, 'POINT')}"></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a th:href="@{/venda/{id}/editar(id=${venda.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div th:each="venda : ${vendas}" class="modal fade" th:id="'confirmDeleteModal' + ${venda.id}" 
+         tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja excluir esta venda?<br>
+                    <strong>Venda #<span th:text="${venda.id}"></span> - <span th:text="${venda.cliente.nomeCompletoRazaoSocial}"></span></strong><br><br>
+                    <span class="text-danger">O estoque será revertido automaticamente.</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a th:href="@{/venda/{id}/deletar(id=${venda.id})}" class="btn btn-danger">Sim, excluir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

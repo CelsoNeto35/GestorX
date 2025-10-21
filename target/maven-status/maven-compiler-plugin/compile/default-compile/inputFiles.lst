@@ -25,6 +25,7 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\repository\FornecedorRepository.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\FormaPagamento.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\LoginController.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editaFornecedorController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\ClienteService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\UsuarioController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ProdutoCadastradoController.java
@@ -41,8 +42,10 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\UsuarioCadastradoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\Fornecedor.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ItemVendasController.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editaUsuarioController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\repository\UsuarioRepository.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\Dto\VendaFormDto.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editarCliente.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ProdutoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\FornecedorController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\ItemVendas.java

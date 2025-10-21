@@ -23,7 +23,7 @@ public class Estoque implements Serializable {
     @Column(name = "Estoque_MarcaModelo")
     private String marcaModelo;
     @Column(name = "Estoque_QuantidadeDisponivel", precision = 15, scale = 3)
-    private BigDecimal quantidadeDisponivel;
+    private Integer quantidadeDisponivel;
     @Column(name = "Estoque_Lote")
     private String lote;
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
@@ -76,11 +76,11 @@ public class Estoque implements Serializable {
         this.marcaModelo = marcaModelo;
     }
 
-    public BigDecimal getQuantidadeDisponivel() {
+    public Integer getQuantidadeDisponivel() {
         return quantidadeDisponivel;
     }
 
-    public void setQuantidadeDisponivel(BigDecimal quantidadeDisponivel) {
+    public void setQuantidadeDisponivel(Integer quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
     }
 

@@ -1,3 +1,4 @@
+br\com\gestorx\api\controller\editaFornecedorController.class
 br\com\gestorx\api\controller\UsuarioCadastradoController.class
 br\com\gestorx\api\repository\ClienteRepository.class
 br\com\gestorx\api\controller\FornecedorController.class
@@ -32,10 +33,12 @@ br\com\gestorx\api\controller\CadastrarProdutoController.class
 br\com\gestorx\api\controller\VendaController$1.class
 br\com\gestorx\api\GestorX.class
 br\com\gestorx\api\model\Fornecedor.class
+br\com\gestorx\api\controller\editarClienteController.class
 br\com\gestorx\api\controller\ItemVendasController.class
 br\com\gestorx\api\Dto\VendaFormDto.class
 br\com\gestorx\api\Dto\ItemVendaFormDto.class
 br\com\gestorx\api\model\ItemVendas.class
+br\com\gestorx\api\controller\editaUsuarioController.class
 br\com\gestorx\api\model\FormaPagamento.class
 br\com\gestorx\api\model\CondicaoPagamento.class
 br\com\gestorx\api\service\EstoqueService.class

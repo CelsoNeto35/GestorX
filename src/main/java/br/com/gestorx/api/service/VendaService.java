@@ -55,10 +55,19 @@ public class VendaService {
                     Estoque estoque = estoqueRepository.findById(item.getEstoque().getId())
                             .orElseThrow(() -> new RuntimeException("Estoque não encontrado: " + item.getEstoque().getId()));
                     
+                    // Converter BigDecimal para Integer para comparar com estoque
+                    int quantidadeVendida = item.getQuantidade().intValue();
+                    
                     // Validar quantidade disponível
-                    if (estoque.getQuantidadeDisponivel().compareTo(item.getQuantidade()) < 0) {
-                        throw new RuntimeException("Quantidade insuficiente em estoque para: " + estoque.getMarcaModelo());
+                    if (estoque.getQuantidadeDisponivel() < quantidadeVendida) {
+                        throw new RuntimeException("Quantidade insuficiente em estoque para: " + estoque.getMarcaModelo() 
+                            + ". Disponível: " + estoque.getQuantidadeDisponivel() + ", Solicitado: " + quantidadeVendida);
                     }
+                    
+                    // DAR BAIXA NO ESTOQUE
+                    int novaQuantidade = estoque.getQuantidadeDisponivel() - quantidadeVendida;
+                    estoque.setQuantidadeDisponivel(novaQuantidade);
+                    estoqueRepository.save(estoque);
                     
                     // Atualizar item com dados do estoque
                     item.setEstoque(estoque);
@@ -165,10 +174,26 @@ public class VendaService {
     }
 
     public void deletar(Long id) {
-        Optional<Venda> venda = vendaRepository.findById(id);
-        if (venda.isPresent()) {
-            venda.get().setAtivo(false);
-            vendaRepository.save(venda.get());
+        Optional<Venda> vendaOpt = vendaRepository.findById(id);
+        if (vendaOpt.isPresent()) {
+            Venda venda = vendaOpt.get();
+            
+            // REVERTER O ESTOQUE ao deletar/cancelar venda
+            if (venda.getItens() != null) {
+                for (ItemVendas item : venda.getItens()) {
+                    Estoque estoque = item.getEstoque();
+                    if (estoque != null) {
+                        // Devolver a quantidade ao estoque (converter BigDecimal para Integer)
+                        int quantidadeDevolvida = item.getQuantidade().intValue();
+                        int novaQuantidade = estoque.getQuantidadeDisponivel() + quantidadeDevolvida;
+                        estoque.setQuantidadeDisponivel(novaQuantidade);
+                        estoqueRepository.save(estoque);
+                    }
+                }
+            }
+            
+            venda.setAtivo(false);
+            vendaRepository.save(venda);
         }
     }
 }
