@@ -120,6 +120,39 @@ public class EstoqueService {
         return true;
     }
 
+    // ============ ENTRADA DE ESTOQUE ============
+    public boolean adicionarEntradaEstoque(Long estoqueId, Integer quantidade, String lote) {
+        Optional<Estoque> optionalEstoque = estoqueRepository.findById(estoqueId);
+        if (!optionalEstoque.isPresent()) {
+            return false;
+        }
+
+        Estoque estoque = optionalEstoque.get();
+        
+        // Valida se o lote é o mesmo
+        if (!estoque.getLote().equalsIgnoreCase(lote)) {
+            return false; // Lote diferente não é permitido
+        }
+
+        // Adiciona a quantidade ao estoque existente
+        Integer quantidadeAtual = estoque.getQuantidadeDisponivel();
+        estoque.setQuantidadeDisponivel(quantidadeAtual + quantidade);
+        
+        estoqueRepository.save(estoque);
+        return true;
+    }
+
+    // ============ VALIDAR LOTE ============
+    public boolean validarLote(Long estoqueId, String lote) {
+        Optional<Estoque> optionalEstoque = estoqueRepository.findById(estoqueId);
+        if (!optionalEstoque.isPresent()) {
+            return false;
+        }
+        
+        Estoque estoque = optionalEstoque.get();
+        return estoque.getLote().equalsIgnoreCase(lote);
+    }
+
     // ============ CALCULAR MARGEM DE LUCRO ============
     private BigDecimal calcularMargemDeLucro(BigDecimal precoDeCusto, BigDecimal precoDeVenda) {
         if (precoDeCusto == null || precoDeCusto.compareTo(BigDecimal.ZERO) == 0) {

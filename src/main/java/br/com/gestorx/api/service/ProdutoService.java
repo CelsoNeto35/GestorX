@@ -60,12 +60,41 @@ public class ProdutoService {
         return true;
     }
 
-    public boolean excluirProduto(Long id) {
-        return produtoRepository.findById(id)
-                .map(produto -> {
-                    produtoRepository.delete(produto);
-                    return true;
-                }).orElse(false);
+  public boolean excluirProduto(Long id) {
+    Optional<Produto> optionalProduto = produtoRepository.findById(id);
+
+    if (!optionalProduto.isPresent()) {
+        return false;
+    }
+
+    produtoRepository.delete(optionalProduto.get());
+    return true;
+}
+
+
+    public ProdutoDto editarProduto(Long id) {
+
+        Optional<Produto> optionalProduto = produtoRepository.findById(id);
+
+        ProdutoDto produtoDto = new ProdutoDto();
+
+        if (!optionalProduto.isPresent()) {
+            produtoDto.setId(0L);
+            return produtoDto;
+        }
+
+        Produto produto = optionalProduto.get();
+
+        produtoDto.setId(produto.getId());
+        produtoDto.setDescricao(produto.getDescricao());
+        produtoDto.setCategoria(produto.getCategoria());
+        produtoDto.setUnidadeDeMedida(produto.getUnidadeDeMedida());
+        if (produto.getFornecedor() != null) {
+            produtoDto.setFornecedorId(produto.getFornecedor().getId());
+            produtoDto.setFornecedorNomeFantasia(produto.getFornecedor().getNomeFantasia());
+        }
+
+        return produtoDto;
     }
 
     public boolean atualizarProduto(Long id, ProdutoDto dados) {

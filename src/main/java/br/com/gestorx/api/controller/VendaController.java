@@ -80,6 +80,7 @@ public class VendaController {
                         @RequestParam(required = false) String formaPagamento,
                         @RequestParam(required = false) String condicaoPagamento,
                         @RequestParam(required = false, defaultValue = "0") BigDecimal desconto,
+                        @RequestParam(required = false, defaultValue = "0") BigDecimal comissaoPercentual,
                         @RequestParam(required = false) LocalDateTime dataVenda,
                         @RequestParam(required = false) List<Long> estoqueIds,
                         @RequestParam(required = false) List<BigDecimal> quantidades,
@@ -91,6 +92,7 @@ public class VendaController {
             System.out.println("FormaPagamento: " + formaPagamento);
             System.out.println("CondicaoPagamento: " + condicaoPagamento);
             System.out.println("Desconto: " + desconto);
+            System.out.println("Comissão %: " + comissaoPercentual);
             System.out.println("EstoqueIds: " + estoqueIds);
             System.out.println("Quantidades: " + quantidades);
             System.out.println("PrecosVenda: " + precosVenda);
@@ -112,6 +114,12 @@ public class VendaController {
                 return "redirect:/cadastrarVenda";
             }
             
+            // Validar comissão
+            if (comissaoPercentual == null || comissaoPercentual.compareTo(BigDecimal.ZERO) < 0 || comissaoPercentual.compareTo(new BigDecimal(100)) > 0) {
+                attributes.addFlashAttribute("erro", "Erro: Comissão deve estar entre 0% e 100%!");
+                return "redirect:/cadastrarVenda";
+            }
+            
             // Validar itens
             if (estoqueIds == null || estoqueIds.isEmpty() || 
                 quantidades == null || quantidades.isEmpty()) {
@@ -123,6 +131,7 @@ public class VendaController {
             Venda venda = new Venda();
             venda.setDataVenda(dataVenda != null ? dataVenda : LocalDateTime.now());
             venda.setDesconto(desconto);
+            venda.setComissaoPercentual(comissaoPercentual);
             venda.setFormaPagamento(FormaPagamento.valueOf(formaPagamento));
             venda.setCondicaoPagamento(CondicaoPagamento.valueOf(condicaoPagamento));
 
@@ -178,16 +187,18 @@ public class VendaController {
 
     @GetMapping("/venda/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        Optional<Venda> venda = vendaService.buscarPorId(id);
-        if (venda.isPresent()) {
+        Optional<Venda> vendaOpt = vendaService.buscarPorId(id);
+        if (vendaOpt.isPresent()) {
+            Venda venda = vendaOpt.get();
             List<ClienteDto> clientes = clienteService.listaCliente();
             List<EstoqueDto> estoques = estoqueService.listarEstoque();
             
-            model.addAttribute("venda", venda.get());
+            model.addAttribute("venda", venda);
             model.addAttribute("clientes", clientes);
             model.addAttribute("estoques", estoques);
             model.addAttribute("formasPagamento", FormaPagamento.values());
             model.addAttribute("condicoesPagamento", CondicaoPagamento.values());
+            model.addAttribute("editando", true);
             
             return "cadastrarVenda";
         }
@@ -203,5 +214,11 @@ public class VendaController {
             attributes.addFlashAttribute("erro", "Erro ao deletar venda: " + e.getMessage());
         }
         return "redirect:/vendaCadastradas";
+    }
+    @GetMapping("/listarComissao")
+    public String listarComissoes(Model model) {
+    List<Venda> vendas = vendaService.listar();
+    model.addAttribute("vendas", vendas);
+    return "listarComissao";
     }
 }

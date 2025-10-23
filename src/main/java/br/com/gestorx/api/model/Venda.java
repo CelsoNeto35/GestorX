@@ -63,6 +63,9 @@ public class Venda implements Serializable {
 
     @Column(name = "ativo")
     private Boolean ativo = true;
+    
+    @Column(name = "comissao_percentual", precision = 5, scale = 2)
+    private BigDecimal comissaoPercentual = BigDecimal.ZERO;
 
     // Construtores
     public Venda() {
@@ -165,4 +168,13 @@ public class Venda implements Serializable {
         }
         return total.subtract(desconto != null ? desconto : BigDecimal.ZERO);
     }
+
+    public BigDecimal getComissaoPercentual() {
+        return comissaoPercentual;
+    }
+
+    public void setComissaoPercentual(BigDecimal comissaoPercentual) {
+        this.comissaoPercentual = comissaoPercentual;
+    }
+    
 }

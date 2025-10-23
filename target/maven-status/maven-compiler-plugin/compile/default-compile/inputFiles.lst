@@ -4,6 +4,7 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\Produto.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\CadastrarFornecedorController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\repository\ProdutoRepository.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editarClienteController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\FornecedorService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\EstoqueCadastradoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\ItensDaEntrada.java
@@ -45,12 +46,12 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editaUsuarioController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\repository\UsuarioRepository.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\Dto\VendaFormDto.java
-C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editarCliente.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ProdutoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\FornecedorController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\ItemVendas.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\EstoqueService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\CondicaoPagamento.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editarProdutoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\Usuario.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\Dto\ItemVendaFormDto.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ClienteCadastradoController.java

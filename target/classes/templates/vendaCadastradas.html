@@ -219,6 +219,7 @@
                                     <th>Cliente</th>
                                     <th>Forma de Pagamento</th>
                                     <th>Condição</th>
+                                    <th>Comissão</th>
                                     <th>Total</th>
                                     <th>Ações</th>
                                 </tr>
@@ -237,6 +238,9 @@
                                     <td data-label="Condição">
                                         <span th:if="${venda.condicaoPagamento.descricao == 'À Vista'}" class="status-badge status-vista">À Vista</span>
                                         <span th:unless="${venda.condicaoPagamento.descricao == 'À Vista'}" class="status-badge status-parcelado" th:text="${venda.condicaoPagamento.descricao}"></span>
+                                    </td>
+                                    <td data-label="Comissão">
+                                        <span class="comissao-badge" th:text="${#numbers.formatDecimal(venda.comissaoPercentual, 1, 2, 'POINT')} + '%'"></span>
                                     </td>
                                     <td th:text="'R$ ' + ${#numbers.formatDecimal(venda.precoTotal, 1, 2, 'POINT')}" data-label="Total"></td>
                                     <td data-label="Ações">
@@ -308,6 +312,10 @@
                             <div class="info-row">
                                 <span class="info-label">Desconto:</span>
                                 <span class="info-value text-danger" th:text="'- R$ ' + ${#numbers.formatDecimal(venda.desconto, 1, 2, 'POINT')}"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Comissão:</span>
+                                <span class="info-value text-primary fw-bold" th:text="${#numbers.formatDecimal(venda.comissaoPercentual, 1, 2, 'POINT')} + '% = R$ ' + ${#numbers.formatDecimal((venda.precoTotal * venda.comissaoPercentual / 100), 1, 2, 'POINT')}"></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label fw-bold fs-5">Total:</span>

@@ -42,6 +42,16 @@ public class VendaService {
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
             venda.setCliente(cliente);
 
+            // Validar comissão
+            if (venda.getComissaoPercentual() == null) {
+                venda.setComissaoPercentual(BigDecimal.ZERO);
+            }
+            
+            if (venda.getComissaoPercentual().compareTo(BigDecimal.ZERO) < 0 || 
+                venda.getComissaoPercentual().compareTo(new BigDecimal(100)) > 0) {
+                throw new RuntimeException("Comissão deve estar entre 0% e 100%");
+            }
+
             // Processar itens
             if (venda.getItens() != null && !venda.getItens().isEmpty()) {
                 List<ItemVendas> itensProcessados = new ArrayList<>();
@@ -131,6 +141,11 @@ public class VendaService {
         }
         
         venda.setPrecoTotal(total);
+        
+        // Garantir que a comissão esteja definida
+        if (venda.getComissaoPercentual() == null) {
+            venda.setComissaoPercentual(BigDecimal.ZERO);
+        }
     }
 
     public Venda atualizar(Long id, Venda vendaAtualizada) {
@@ -141,7 +156,21 @@ public class VendaService {
         
         Venda venda = vendaExistente.get();
         
-        // Atualizar dados básicos
+        // PASSO 1: REVERTER O ESTOQUE DOS ITENS ANTIGOS
+        if (venda.getItens() != null && !venda.getItens().isEmpty()) {
+            for (ItemVendas itemAntigo : venda.getItens()) {
+                Estoque estoque = itemAntigo.getEstoque();
+                if (estoque != null) {
+                    // Devolver a quantidade ao estoque
+                    int quantidadeDevolvida = itemAntigo.getQuantidade().intValue();
+                    int novaQuantidade = estoque.getQuantidadeDisponivel() + quantidadeDevolvida;
+                    estoque.setQuantidadeDisponivel(novaQuantidade);
+                    estoqueRepository.save(estoque);
+                }
+            }
+        }
+        
+        // PASSO 2: Atualizar dados básicos
         if (vendaAtualizada.getCliente() != null && vendaAtualizada.getCliente().getId() != null) {
             Cliente cliente = clienteRepository.findById(vendaAtualizada.getCliente().getId())
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
@@ -151,10 +180,46 @@ public class VendaService {
         venda.setFormaPagamento(vendaAtualizada.getFormaPagamento());
         venda.setCondicaoPagamento(vendaAtualizada.getCondicaoPagamento());
         venda.setDesconto(vendaAtualizada.getDesconto());
+        venda.setComissaoPercentual(vendaAtualizada.getComissaoPercentual());
         
-        // Atualizar itens
-        if (vendaAtualizada.getItens() != null) {
-            venda.setItens(vendaAtualizada.getItens());
+        // PASSO 3: Processar NOVOS itens e dar baixa no estoque
+        if (vendaAtualizada.getItens() != null && !vendaAtualizada.getItens().isEmpty()) {
+            List<ItemVendas> itensProcessados = new ArrayList<>();
+            
+            for (ItemVendas novoItem : vendaAtualizada.getItens()) {
+                if (novoItem.getEstoque() == null || novoItem.getEstoque().getId() == null) {
+                    continue;
+                }
+                
+                Estoque estoque = estoqueRepository.findById(novoItem.getEstoque().getId())
+                        .orElseThrow(() -> new RuntimeException("Estoque não encontrado: " + novoItem.getEstoque().getId()));
+                
+                int quantidadeVendida = novoItem.getQuantidade().intValue();
+                
+                // Validar quantidade disponível
+                if (estoque.getQuantidadeDisponivel() < quantidadeVendida) {
+                    throw new RuntimeException("Quantidade insuficiente em estoque para: " + estoque.getMarcaModelo() 
+                        + ". Disponível: " + estoque.getQuantidadeDisponivel() + ", Solicitado: " + quantidadeVendida);
+                }
+                
+                // DAR BAIXA NO ESTOQUE novamente
+                int novaQuantidade = estoque.getQuantidadeDisponivel() - quantidadeVendida;
+                estoque.setQuantidadeDisponivel(novaQuantidade);
+                estoqueRepository.save(estoque);
+                
+                // Configurar item
+                novoItem.setEstoque(estoque);
+                if (novoItem.getPrecoVenda() == null || novoItem.getPrecoVenda().compareTo(BigDecimal.ZERO) == 0) {
+                    novoItem.setPrecoVenda(estoque.getPrecoDeVenda());
+                }
+                novoItem.setVenda(venda);
+                
+                itensProcessados.add(novoItem);
+            }
+            
+            // Limpar itens antigos e adicionar novos
+            venda.getItens().clear();
+            venda.setItens(itensProcessados);
         }
         
         calcularTotais(venda);
@@ -166,7 +231,7 @@ public class VendaService {
     }
 
     public List<Venda> listar() {
-        return vendaRepository.findAll();
+        return vendaRepository.findAllAtivos();
     }
 
     public List<Venda> buscarPorCliente(Long clienteId) {
@@ -183,7 +248,7 @@ public class VendaService {
                 for (ItemVendas item : venda.getItens()) {
                     Estoque estoque = item.getEstoque();
                     if (estoque != null) {
-                        // Devolver a quantidade ao estoque (converter BigDecimal para Integer)
+                        // Devolver a quantidade ao estoque
                         int quantidadeDevolvida = item.getQuantidade().intValue();
                         int novaQuantidade = estoque.getQuantidadeDisponivel() + quantidadeDevolvida;
                         estoque.setQuantidadeDisponivel(novaQuantidade);
