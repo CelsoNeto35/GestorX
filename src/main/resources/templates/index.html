@@ -106,6 +106,13 @@
                 margin-top: 30px;
                 font-size: 0.9rem;
             }
+
+            /* Loading spinner */
+            .spinner-border {
+                width: 3rem;
+                height: 3rem;
+                border-width: 0.3em;
+            }
         </style>
     </head>
 
@@ -137,6 +144,7 @@
                             </li>
                         </ul>
                     </li>
+                </ul>
             </div>
 
             <form th:action="@{/logout}" method="post" class="px-3 mb-3">
@@ -173,61 +181,143 @@
             </footer>
         </div>
 
-        <!-- ===== SCRIPTS ===== -->
-        <script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- ===== SCRIPTS GOOGLE CHARTS COM DADOS REAIS ===== -->
+        <script th:inline="none">
             google.charts.load('current', {'packages': ['corechart']});
             google.charts.setOnLoadCallback(drawCharts);
 
-            function drawCharts() {
-                const pieData = google.visualization.arrayToDataTable([
-                    ["Categoria", "Quantidade"],
-                    ["Nelore", 45],
-                    ["Angus", 26],
-                    ["Gir", 20],
-                    ["Jerssi", 9],
-                ]);
+            async function drawCharts() {
+                try {
+                    // Mostrar loading nos gráficos
+                    document.getElementById('column_chart').innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Carregando dados...</p></div>';
+                    document.getElementById('pie_chart').innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>';
+                    document.getElementById('donut_chart').innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>';
 
-                const donutData = google.visualization.arrayToDataTable([
-                    ["Categoria", "Quantidade"],
-                    ["Semen", 5],
-                    ["Ração", 10],
-                    ["Feno", 15]
-                ]);
+                    // Buscar dados reais do backend
+                    const [vendasResponse, racasResponse, produtosResponse] = await Promise.all([
+                        fetch('/index/api/vendas-mensais'),
+                        fetch('/index/api/racas'),
+                        fetch('/index/api/produtos')
+                    ]);
 
-                const columnData = google.visualization.arrayToDataTable([
-                    ["Mês", "Vendas", {role: "style"}],
-                    ["Janeiro", 15, "color: #000000"],
-                    ["Fevereiro", 22, "color: #1E88E5"],
-                    ["Março", 18, "color: #000000"],
-                    ["Abril", 30, "color: #1E88E5"],
-                ]);
+                    // Verificar se as requisições foram bem-sucedidas
+                    if (!vendasResponse.ok || !racasResponse.ok || !produtosResponse.ok) {
+                        throw new Error('Erro ao buscar dados do servidor');
+                    }
 
-                const pieOptions = {
-                    pieSliceText: "value",
-                    legend: {position: "right"},
-                    backgroundColor: "transparent",
-                    colors: ["#000000", "#1E88E5", "#000000", "#1E88E5"], // fatias preto e azul
-                };
+                    const vendas = await vendasResponse.json();
+                    const racas = await racasResponse.json();
+                    const produtos = await produtosResponse.json();
 
-                const donutOptions = {
-                    pieHole: 0.5,
-                    legend: {position: "right"},
-                    backgroundColor: "transparent",
-                    colors: ["#000000", "#1E88E5", "#000000"], // fatias preto e azul
-                };
+                    // ===== GRÁFICO DE VENDAS MENSAIS (Colunas) =====
+                    const columnDataArray = [["Mês", "Vendas", {role: "style"}]];
+                    
+                    if (Object.keys(vendas).length === 0) {
+                        columnDataArray.push(["Sem dados", 0, "color: #cccccc"]);
+                    } else {
+                        Object.entries(vendas).forEach(([mes, valor], index) => {
+                            columnDataArray.push([
+                                mes, 
+                                valor, 
+                                index % 2 === 0 ? "color: #000000" : "color: #1E88E5"
+                            ]);
+                        });
+                    }
+                    
+                    const columnData = google.visualization.arrayToDataTable(columnDataArray);
 
-                const columnOptions = {
-                    title: "Vendas por Mês",
-                    legend: {position: "none"},
-                    backgroundColor: "transparent",
-                    colors: ["#000000", "#1E88E5", "#000000", "#1E88E5"], // barras preto e azul
-                };
+                    const columnOptions = {
+                        title: "Vendas por Mês",
+                        legend: {position: "none"},
+                        backgroundColor: "transparent",
+                        hAxis: {
+                            title: "Mês",
+                            titleTextStyle: {color: '#333'}
+                        },
+                        vAxis: {
+                            title: "Quantidade de Vendas",
+                            minValue: 0,
+                            format: '0'
+                        },
+                        chartArea: {width: '85%', height: '70%'}
+                    };
 
+                    // ===== GRÁFICO DE RAÇAS (Pizza) =====
+                    const pieDataArray = [["Categoria", "Quantidade"]];
+                    
+                    if (Object.keys(racas).length === 0) {
+                        pieDataArray.push(["Sem dados", 1]);
+                    } else {
+                        Object.entries(racas).forEach(([categoria, quantidade]) => {
+                            pieDataArray.push([categoria, quantidade]);
+                        });
+                    }
+                    
+                    const pieData = google.visualization.arrayToDataTable(pieDataArray);
 
-                new google.visualization.ColumnChart(document.getElementById('column_chart')).draw(columnData, columnOptions);
-                new google.visualization.PieChart(document.getElementById('pie_chart')).draw(pieData, pieOptions);
-                new google.visualization.PieChart(document.getElementById('donut_chart')).draw(donutData, donutOptions);
+                    const pieOptions = {
+                        pieSliceText: "value",
+                        legend: {position: "right"},
+                        backgroundColor: "transparent",
+                        colors: ["#000000", "#1E88E5", "#43A047", "#FB8C00", "#E53935"],
+                        chartArea: {width: '90%', height: '80%'}
+                    };
+
+                    // ===== GRÁFICO DE PRODUTOS (Donut) =====
+                    const donutDataArray = [["Categoria", "Quantidade"]];
+                    
+                    if (Object.keys(produtos).length === 0) {
+                        donutDataArray.push(["Sem dados", 1]);
+                    } else {
+                        Object.entries(produtos).forEach(([categoria, quantidade]) => {
+                            donutDataArray.push([categoria, quantidade]);
+                        });
+                    }
+                    
+                    const donutData = google.visualization.arrayToDataTable(donutDataArray);
+
+                    const donutOptions = {
+                        pieHole: 0.5,
+                        legend: {position: "right"},
+                        backgroundColor: "transparent",
+                        colors: ["#000000", "#1E88E5", "#43A047", "#FB8C00", "#E53935"],
+                        chartArea: {width: '90%', height: '80%'},
+                        pieSliceText: "value"
+                    };
+
+                    // Renderizar todos os gráficos
+                    new google.visualization.ColumnChart(document.getElementById('column_chart')).draw(columnData, columnOptions);
+                    new google.visualization.PieChart(document.getElementById('pie_chart')).draw(pieData, pieOptions);
+                    new google.visualization.PieChart(document.getElementById('donut_chart')).draw(donutData, donutOptions);
+
+                    // Log de sucesso (pode remover em produção)
+                    console.log('✅ Gráficos carregados com sucesso!');
+                    console.log('📊 Vendas:', vendas);
+                    console.log('📊 Raças:', racas);
+                    console.log('📊 Produtos:', produtos);
+
+                } catch (error) {
+                    console.error('❌ Erro ao carregar dados dos gráficos:', error);
+                    
+                    // Mostrar mensagem de erro amigável
+                    const errorMessage = `
+                        <div class="alert alert-danger m-3" role="alert">
+                            <strong>Erro ao carregar dados!</strong><br>
+                            Por favor, recarregue a página ou entre em contato com o suporte.
+                        </div>
+                    `;
+                    
+                    document.getElementById('column_chart').innerHTML = errorMessage;
+                    document.getElementById('pie_chart').innerHTML = errorMessage;
+                    document.getElementById('donut_chart').innerHTML = errorMessage;
+                }
             }
+
+            // Opcional: Atualizar gráficos automaticamente a cada 5 minutos
+            // setInterval(drawCharts, 300000);
         </script>
 
         <!-- SweetAlert Boas-vindas -->

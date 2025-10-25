@@ -41,6 +41,7 @@ br\com\gestorx\api\Dto\ItemVendaFormDto.class
 br\com\gestorx\api\model\ItemVendas.class
 br\com\gestorx\api\controller\editaUsuarioController.class
 br\com\gestorx\api\model\FormaPagamento.class
+br\com\gestorx\api\service\DashboardService.class
 br\com\gestorx\api\service\RelatorioService.class
 br\com\gestorx\api\model\CondicaoPagamento.class
 br\com\gestorx\api\service\EstoqueService.class

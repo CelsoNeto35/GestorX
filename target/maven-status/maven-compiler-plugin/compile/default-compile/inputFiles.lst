@@ -51,6 +51,7 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\ProdutoController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\FornecedorController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\ItemVendas.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\DashboardService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\EstoqueService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\CondicaoPagamento.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\editarProdutoController.java

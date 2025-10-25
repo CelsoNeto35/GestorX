@@ -360,7 +360,7 @@
                 if (typeof estoquesData !== 'undefined' && estoquesData) {
                     estoquesData.forEach(estoque => {
                         estoqueOptions += `<option value="${estoque.id}" data-preco="${estoque.precoDeVenda}">
-                            ${estoque.marcaModelo} - Qtd: ${estoque.quantidadeDisponivel}
+                            ${estoque.produtoDescricao} - Qtd: ${estoque.quantidadeDisponivel}
                         </option>`;
                     });
                 }
