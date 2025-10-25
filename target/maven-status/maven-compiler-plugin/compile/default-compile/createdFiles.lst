@@ -41,10 +41,12 @@ br\com\gestorx\api\Dto\ItemVendaFormDto.class
 br\com\gestorx\api\model\ItemVendas.class
 br\com\gestorx\api\controller\editaUsuarioController.class
 br\com\gestorx\api\model\FormaPagamento.class
+br\com\gestorx\api\service\RelatorioService.class
 br\com\gestorx\api\model\CondicaoPagamento.class
 br\com\gestorx\api\service\EstoqueService.class
 br\com\gestorx\api\repository\UsuarioRepository.class
 br\com\gestorx\api\controller\VendaController.class
+br\com\gestorx\api\controller\RelatorioController.class
 br\com\gestorx\api\controller\CadastrarEstoqueController.class
 br\com\gestorx\api\controller\CadastrarClienteController.class
 br\com\gestorx\api\repository\VendaRepository.class

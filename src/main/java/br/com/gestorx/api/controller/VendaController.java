@@ -221,4 +221,76 @@ public class VendaController {
     model.addAttribute("vendas", vendas);
     return "listarComissao";
     }
+    // Adicione este método completo no VendaController.java
+
+@GetMapping("/listarFaturamento")
+public String listarFaturamento(
+        @RequestParam(required = false) String dataInicio,
+        @RequestParam(required = false) String dataFim,
+        Model model) {
+    
+    LocalDateTime inicio = null;
+    LocalDateTime fim = null;
+    
+    // Parse das datas se fornecidas
+    if (dataInicio != null && !dataInicio.isEmpty()) {
+        inicio = LocalDateTime.parse(dataInicio + "T00:00:00");
+    }
+    if (dataFim != null && !dataFim.isEmpty()) {
+        fim = LocalDateTime.parse(dataFim + "T23:59:59");
+    }
+    
+    // Buscar vendas (filtradas ou todas)
+    List<Venda> vendas;
+    if (inicio != null && fim != null) {
+        vendas = vendaService.listarPorPeriodo(inicio, fim);
+    } else {
+        vendas = vendaService.listar();
+    }
+    
+    // Calcular totais com proteção contra null
+    BigDecimal faturamentoTotal = BigDecimal.ZERO;
+    BigDecimal comissaoTotal = BigDecimal.ZERO;
+    
+    for (Venda venda : vendas) {
+        // Garantir que os valores não sejam nulos
+        BigDecimal precoTotal = venda.getPrecoTotal() != null ? venda.getPrecoTotal() : BigDecimal.ZERO;
+        BigDecimal comissaoPerc = venda.getComissaoPercentual() != null ? venda.getComissaoPercentual() : BigDecimal.ZERO;
+        
+        faturamentoTotal = faturamentoTotal.add(precoTotal);
+        BigDecimal comissao = precoTotal.multiply(comissaoPerc).divide(new BigDecimal(100));
+        comissaoTotal = comissaoTotal.add(comissao);
+    }
+    
+    // Calcular faturamento mensal e anual
+    LocalDateTime agora = LocalDateTime.now();
+    LocalDateTime inicioMes = agora.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+    LocalDateTime inicioAno = agora.withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
+    
+    List<Venda> vendasMes = vendaService.listarPorPeriodo(inicioMes, agora);
+    List<Venda> vendasAno = vendaService.listarPorPeriodo(inicioAno, agora);
+    
+    BigDecimal faturamentoMensal = BigDecimal.ZERO;
+    BigDecimal faturamentoAnual = BigDecimal.ZERO;
+    
+    for (Venda venda : vendasMes) {
+        BigDecimal precoTotal = venda.getPrecoTotal() != null ? venda.getPrecoTotal() : BigDecimal.ZERO;
+        faturamentoMensal = faturamentoMensal.add(precoTotal);
+    }
+    
+    for (Venda venda : vendasAno) {
+        BigDecimal precoTotal = venda.getPrecoTotal() != null ? venda.getPrecoTotal() : BigDecimal.ZERO;
+        faturamentoAnual = faturamentoAnual.add(precoTotal);
+    }
+    
+    model.addAttribute("vendas", vendas);
+    model.addAttribute("faturamentoTotal", faturamentoTotal);
+    model.addAttribute("comissaoTotal", comissaoTotal);
+    model.addAttribute("faturamentoMensal", faturamentoMensal);
+    model.addAttribute("faturamentoAnual", faturamentoAnual);
+    model.addAttribute("dataInicio", dataInicio);
+    model.addAttribute("dataFim", dataFim);
+    
+    return "listarFaturamento";
+}
 }

@@ -34,7 +34,9 @@ C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\a
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\Dto\UsuarioDto.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\ItemVendasService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\CadastrarEstoqueController.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\RelatorioController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\GestorX.java
+C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\service\RelatorioService.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\Dto\ClienteDto.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\controller\CadastrarUsuarioController.java
 C:\Users\cneto\Documents\NetBeansProjects\GestorX\src\main\java\br\com\gestorx\api\model\Entrada.java

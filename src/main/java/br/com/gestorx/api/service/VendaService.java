@@ -238,6 +238,11 @@ public class VendaService {
         return vendaRepository.findByClienteId(clienteId);
     }
 
+    // NOVO MÉTODO PARA FILTRAR VENDAS POR PERÍODO
+    public List<Venda> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        return vendaRepository.findByDataVendaBetweenAndAtivoTrue(inicio, fim);
+    }
+
     public void deletar(Long id) {
         Optional<Venda> vendaOpt = vendaRepository.findById(id);
         if (vendaOpt.isPresent()) {
