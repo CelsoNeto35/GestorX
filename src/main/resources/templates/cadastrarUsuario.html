@@ -17,8 +17,6 @@
             background-color: #f5f6fa;
             font-family: 'Segoe UI', sans-serif;
         }
-
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
@@ -67,8 +65,6 @@
             background-color: #fc0808;
             color: #fff;
         }
-
-        /* ===== MAIN CONTENT ===== */
         .content {
             margin-left: 250px;
             padding: 40px;
@@ -78,23 +74,140 @@
         .card {
             border: none;
             border-radius: 15px;
+            background: #fff;
         }
 
         .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
+            background: transparent;
+            border: none;
+            padding: 25px 30px 10px;
         }
 
         .card.shadow {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-body {
+            padding: 20px 30px 30px;
         }
 
         h5 {
             font-weight: 600;
-            color: #333;
+            color: #1a1a1a;
+            font-size: 1.4rem;
+            margin-bottom: 0;
         }
 
-        /* ===== Responsividade ===== */
+        /* Estilos Minimalistas dos Inputs */
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            border-radius: 0;
+            padding: 10px 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: transparent;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-bottom-color: #000;
+            background: transparent;
+        }
+
+        .form-control::placeholder {
+            color: #bbb;
+            font-size: 0.95rem;
+        }
+
+        /* Seções do Formulário */
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Botões Minimalistas */
+        .btn-minimal {
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .btn-minimal-danger {
+            border: 2px solid #dc3545;
+            background: transparent;
+            color: #dc3545;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
+
+        .password-strength {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 100%;
@@ -141,15 +254,16 @@
                 width: 100%;
             }
 
-            .btn-lg {
+            .btn-minimal,
+            .btn-minimal-danger {
                 width: 100%;
+                margin-bottom: 10px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- ===== SIDEBAR ===== -->
     <nav class="sidebar">
         <div>
             <a class="navbar-brand" href="/index">GestorX</a>
@@ -163,6 +277,19 @@
                 <li class="nav-item"><a class="nav-link" href="/clienteCadastrados">Clientes</a></li>
                 <li class="nav-item"><a class="nav-link" href="/fornecedorCadastrados">Fornecedores</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/usuarioCadastrados">Usuários</a></li>
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownRelatorios" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownRelatorios">
+                            <li>
+                                <a class="dropdown-item" href="/relatorio/vendas/pdf" target="_blank">
+                                    Relatório de Vendas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
             </ul>
         </div>
         <div class="px-3 mb-3">
@@ -172,83 +299,94 @@
         </div>
     </nav>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <div class="content">
-        <div class="container">
+        <div class="container-fluid">
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h5 class="mb-0 text-dark">Cadastro de Usuário</h5>
+                <div class="card-header">
+                    <h5>Cadastro de Usuário</h5>
                 </div>
 
                 <div class="card-body">
                     <form th:method="post" th:action="@{/usuario}" th:object="${usuario}">
                         <input type="hidden" th:field="*{id}" />
 
-                        <div class="form-group mb-3">
-                            <label for="nome">Nome *</label>
-                            <input type="text" id="nome" th:field="*{nome}"
-                                   class="form-control form-control-lg" required />
+                        <!-- Dados do Usuário -->
+                        <div class="form-section">
+                            <div class="section-title">Dados do Usuário</div>
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <label for="nome" class="form-label">Nome Completo *</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="nome" th:field="*{nome}" class="form-control" placeholder="Digite o nome completo" required />
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="email" class="form-label">E-mail *</label>
+                                    <div class="input-icon">
+                                        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="email@exemplo.com" required />
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="email">E-mail *</label>
-                            <input type="email" id="email" th:field="*{email}"
-                                   class="form-control form-control-lg" required />
+                        <!-- Segurança -->
+                        <div class="form-section">
+                            <div class="section-title">Segurança</div>
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <label for="senha" class="form-label">Senha *</label>
+                                    <div class="input-icon">
+                                        <input type="password" id="senha" th:field="*{senha}" class="form-control" placeholder="Digite uma senha segura" required />
+                                        <i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
+                                    </div>
+                                    <small id="passwordStrength" class="password-strength"></small>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="senha">Senha *</label>
-                            <input type="password" id="senha" th:field="*{senha}"
-                                   class="form-control form-control-lg" required />
-                        </div>
-
-                        <div class="pt-1 mb-4 d-flex gap-2 flex-wrap">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                        <!-- Botões -->
+                        <div class="d-flex gap-3 flex-wrap mt-4">
+                            <button type="submit" class="btn btn-minimal">
                                 <i class="bi bi-check-circle"></i> Cadastrar
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-lg"
-                                    data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
+                            <button type="button" class="btn btn-minimal-danger" data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
                                 <i class="bi bi-x-circle"></i> Cancelar
                             </button>
                         </div>
                     </form>
 
-                    <!-- Mensagem de erro -->
-                    <div th:if="${param.erro}" class="alert alert-danger mt-3" role="alert">
-                        Erro ao realizar cadastro do usuário!
+                    <!-- Mensagens -->
+                    <div th:if="${param.erro}" class="alert alert-danger mt-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Erro ao realizar cadastro do usuário!
                     </div>
 
-                    <!-- Mensagem de sucesso -->
-                    <div th:if="${param.sucesso}" class="alert alert-success mt-3" role="alert">
-                        Usuário cadastrado com sucesso!
+                    <div th:if="${param.sucesso}" class="alert alert-success mt-4" role="alert">
+                        <i class="bi bi-check-circle-fill"></i> Usuário cadastrado com sucesso!
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de confirmação -->
-    <div class="modal fade" id="confirmCancelModal" tabindex="-1"
-         aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="confirmCancelModalLabel">Confirmar Cancelamento</h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     Tem certeza de que deseja cancelar o cadastro?<br>
                     Todas as alterações serão descartadas.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Voltar
-                    </button>
-                    <a class="btn btn-danger" th:href="@{/usuarioCadastrados}">
-                        Sim, cancelar
-                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <a class="btn btn-danger" th:href="@{/usuarioCadastrados}">Sim, cancelar</a>
                 </div>
             </div>
         </div>
@@ -256,5 +394,57 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script de Toggle de Senha e Validação -->
+    <script>
+        const passwordInput = document.getElementById('senha');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordStrength = document.getElementById('passwordStrength');
+
+        // Toggle mostrar/ocultar senha
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Trocar ícone
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // Validação de força da senha
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            let message = '';
+            let color = '';
+
+            if (password.length === 0) {
+                passwordStrength.textContent = '';
+                return;
+            }
+
+            // Critérios de força
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            // Definir mensagem e cor
+            if (strength <= 2) {
+                message = 'Senha fraca';
+                color = '#dc3545';
+            } else if (strength <= 3) {
+                message = 'Senha média';
+                color = '#ffc107';
+            } else {
+                message = 'Senha forte';
+                color = '#28a745';
+            }
+
+            passwordStrength.textContent = message;
+            passwordStrength.style.color = color;
+        });
+    </script>
 </body>
 </html>

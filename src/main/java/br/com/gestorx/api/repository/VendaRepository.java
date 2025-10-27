@@ -41,4 +41,41 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
            "AND v.dataVenda >= :dataInicio " +
            "ORDER BY v.dataVenda DESC")
     List<Venda> findVendasRecentes(@Param("dataInicio") LocalDateTime dataInicio);
+    
+    // ========== NOVOS MÉTODOS COM JOIN FETCH ==========
+    
+    /**
+     * Busca uma venda por ID com todos os relacionamentos carregados (EAGER)
+     * Resolve o problema de LazyInitializationException
+     */
+    @Query("SELECT DISTINCT v FROM Venda v " +
+           "LEFT JOIN FETCH v.cliente " +
+           "LEFT JOIN FETCH v.itens i " +
+           "LEFT JOIN FETCH i.estoque " +
+           "WHERE v.id = :id")
+    Optional<Venda> findByIdWithItens(@Param("id") Long id);
+    
+    /**
+     * Lista todas as vendas ativas com itens carregados
+     * Use este método na tela de listagem para evitar N+1 queries
+     */
+    @Query("SELECT DISTINCT v FROM Venda v " +
+           "LEFT JOIN FETCH v.cliente " +
+           "LEFT JOIN FETCH v.itens i " +
+           "LEFT JOIN FETCH i.estoque " +
+           "WHERE v.ativo = true " +
+           "ORDER BY v.dataVenda DESC")
+    List<Venda> findAllWithItens();
+    
+    /**
+     * Busca vendas por período com itens carregados
+     */
+    @Query("SELECT DISTINCT v FROM Venda v " +
+           "LEFT JOIN FETCH v.cliente " +
+           "LEFT JOIN FETCH v.itens i " +
+           "LEFT JOIN FETCH i.estoque " +
+           "WHERE v.dataVenda BETWEEN :inicio AND :fim " +
+           "AND v.ativo = true " +
+           "ORDER BY v.dataVenda DESC")
+    List<Venda> findByPeriodoWithItens(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 }

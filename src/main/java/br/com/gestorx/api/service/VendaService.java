@@ -33,6 +33,8 @@ public class VendaService {
 
     public Venda salvar(Venda venda) {
         try {
+            System.out.println(" Iniciando salvamento de venda...");
+            
             // Validar e buscar cliente
             if (venda.getCliente() == null || venda.getCliente().getId() == null) {
                 throw new RuntimeException("Cliente não selecionado");
@@ -42,7 +44,7 @@ public class VendaService {
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
             venda.setCliente(cliente);
 
-            // Validar comissão
+            // Validar e inicializar comissão
             if (venda.getComissaoPercentual() == null) {
                 venda.setComissaoPercentual(BigDecimal.ZERO);
             }
@@ -50,6 +52,11 @@ public class VendaService {
             if (venda.getComissaoPercentual().compareTo(BigDecimal.ZERO) < 0 || 
                 venda.getComissaoPercentual().compareTo(new BigDecimal(100)) > 0) {
                 throw new RuntimeException("Comissão deve estar entre 0% e 100%");
+            }
+
+            // Inicializar desconto se null
+            if (venda.getDesconto() == null) {
+                venda.setDesconto(BigDecimal.ZERO);
             }
 
             // Processar itens
@@ -78,6 +85,8 @@ public class VendaService {
                     int novaQuantidade = estoque.getQuantidadeDisponivel() - quantidadeVendida;
                     estoque.setQuantidadeDisponivel(novaQuantidade);
                     estoqueRepository.save(estoque);
+                    
+                    System.out.println(" Baixa no estoque: " + estoque.getMarcaModelo() + " | Qtd vendida: " + quantidadeVendida);
                     
                     // Atualizar item com dados do estoque
                     item.setEstoque(estoque);
@@ -108,9 +117,13 @@ public class VendaService {
             // Calcular totais
             calcularTotais(venda);
             
-            return vendaRepository.save(venda);
+            Venda vendaSalva = vendaRepository.save(venda);
+            System.out.println(" Venda salva com sucesso - ID: " + vendaSalva.getId());
+            
+            return vendaSalva;
             
         } catch (Exception e) {
+            System.err.println(" Erro ao salvar venda: " + e.getMessage());
             throw new RuntimeException("Erro ao salvar venda: " + e.getMessage(), e);
         }
     }
@@ -146,15 +159,20 @@ public class VendaService {
         if (venda.getComissaoPercentual() == null) {
             venda.setComissaoPercentual(BigDecimal.ZERO);
         }
+        
+        System.out.println(" Totais calculados - Subtotal: R$ " + subtotal + " | Desconto: R$ " + desconto + " | Total: R$ " + total);
     }
 
     public Venda atualizar(Long id, Venda vendaAtualizada) {
-        Optional<Venda> vendaExistente = vendaRepository.findById(id);
+        // Buscar venda com itens carregados usando JOIN FETCH
+        Optional<Venda> vendaExistente = vendaRepository.findByIdWithItens(id);
         if (!vendaExistente.isPresent()) {
             throw new RuntimeException("Venda não encontrada");
         }
         
         Venda venda = vendaExistente.get();
+        
+        System.out.println("️ Atualizando venda ID: " + id);
         
         // PASSO 1: REVERTER O ESTOQUE DOS ITENS ANTIGOS
         if (venda.getItens() != null && !venda.getItens().isEmpty()) {
@@ -166,6 +184,8 @@ public class VendaService {
                     int novaQuantidade = estoque.getQuantidadeDisponivel() + quantidadeDevolvida;
                     estoque.setQuantidadeDisponivel(novaQuantidade);
                     estoqueRepository.save(estoque);
+                    
+                    System.out.println("↩️ Revertendo estoque: " + estoque.getMarcaModelo() + " | Qtd: " + quantidadeDevolvida);
                 }
             }
         }
@@ -179,8 +199,9 @@ public class VendaService {
         
         venda.setFormaPagamento(vendaAtualizada.getFormaPagamento());
         venda.setCondicaoPagamento(vendaAtualizada.getCondicaoPagamento());
-        venda.setDesconto(vendaAtualizada.getDesconto());
-        venda.setComissaoPercentual(vendaAtualizada.getComissaoPercentual());
+        venda.setDesconto(vendaAtualizada.getDesconto() != null ? vendaAtualizada.getDesconto() : BigDecimal.ZERO);
+        venda.setComissaoPercentual(vendaAtualizada.getComissaoPercentual() != null ? 
+                                    vendaAtualizada.getComissaoPercentual() : BigDecimal.ZERO);
         
         // PASSO 3: Processar NOVOS itens e dar baixa no estoque
         if (vendaAtualizada.getItens() != null && !vendaAtualizada.getItens().isEmpty()) {
@@ -207,6 +228,8 @@ public class VendaService {
                 estoque.setQuantidadeDisponivel(novaQuantidade);
                 estoqueRepository.save(estoque);
                 
+                System.out.println(" Nova baixa: " + estoque.getMarcaModelo() + " | Qtd: " + quantidadeVendida);
+                
                 // Configurar item
                 novoItem.setEstoque(estoque);
                 if (novoItem.getPrecoVenda() == null || novoItem.getPrecoVenda().compareTo(BigDecimal.ZERO) == 0) {
@@ -223,33 +246,119 @@ public class VendaService {
         }
         
         calcularTotais(venda);
-        return vendaRepository.save(venda);
+        Venda vendaSalva = vendaRepository.save(venda);
+        System.out.println(" Venda atualizada com sucesso");
+        
+        return vendaSalva;
     }
 
+    /**
+     * Busca venda por ID com todos os itens carregados
+     * CORRIGIDO: Agora usa findByIdWithItens para evitar LazyInitializationException
+     */
     public Optional<Venda> buscarPorId(Long id) {
-        return vendaRepository.findById(id);
+        try {
+            Optional<Venda> vendaOpt = vendaRepository.findByIdWithItens(id);
+            if (vendaOpt.isPresent()) {
+                Venda venda = vendaOpt.get();
+                
+                // Garantir inicialização de campos que podem ser null
+                if (venda.getComissaoPercentual() == null) {
+                    venda.setComissaoPercentual(BigDecimal.ZERO);
+                }
+                if (venda.getDesconto() == null) {
+                    venda.setDesconto(BigDecimal.ZERO);
+                }
+                
+                // Forçar inicialização da coleção de itens (garantia extra)
+                if (venda.getItens() != null) {
+                    venda.getItens().size();
+                }
+                
+                System.out.println("Venda carregada com sucesso - ID: " + venda.getId() + 
+                                 " | Itens: " + (venda.getItens() != null ? venda.getItens().size() : 0));
+            }
+            return vendaOpt;
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar venda por ID: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback para busca simples (sem itens)
+            return vendaRepository.findById(id);
+        }
     }
 
+    /**
+     * Lista todas as vendas ativas com itens carregados
+     * CORRIGIDO: Usa findAllWithItens para evitar N+1 queries
+     */
     public List<Venda> listar() {
-        return vendaRepository.findAllAtivos();
+        try {
+            List<Venda> vendas = vendaRepository.findAllWithItens();
+            
+            // Garantir que todos os campos estejam inicializados
+            for (Venda venda : vendas) {
+                if (venda.getComissaoPercentual() == null) {
+                    venda.setComissaoPercentual(BigDecimal.ZERO);
+                }
+                if (venda.getDesconto() == null) {
+                    venda.setDesconto(BigDecimal.ZERO);
+                }
+            }
+            
+            System.out.println("" + vendas.size() + " vendas carregadas com itens");
+            return vendas;
+        } catch (Exception e) {
+            System.err.println("Erro ao listar vendas com itens: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback para busca simples
+            return vendaRepository.findAllAtivos();
+        }
     }
 
     public List<Venda> buscarPorCliente(Long clienteId) {
         return vendaRepository.findByClienteId(clienteId);
     }
 
-    // NOVO MÉTODO PARA FILTRAR VENDAS POR PERÍODO
+    /**
+     * Lista vendas por período com itens carregados
+     * CORRIGIDO: Usa findByPeriodoWithItens
+     */
     public List<Venda> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        return vendaRepository.findByDataVendaBetweenAndAtivoTrue(inicio, fim);
+        try {
+            List<Venda> vendas = vendaRepository.findByPeriodoWithItens(inicio, fim);
+            
+            // Garantir inicialização
+            for (Venda venda : vendas) {
+                if (venda.getComissaoPercentual() == null) {
+                    venda.setComissaoPercentual(BigDecimal.ZERO);
+                }
+                if (venda.getDesconto() == null) {
+                    venda.setDesconto(BigDecimal.ZERO);
+                }
+            }
+            
+            return vendas;
+        } catch (Exception e) {
+            System.err.println("Erro ao listar vendas por período: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback
+            return vendaRepository.findByDataVendaBetweenAndAtivoTrue(inicio, fim);
+        }
     }
 
+    /**
+     * Deleta venda e reverte estoque
+     * CORRIGIDO: Usa findByIdWithItens para garantir que os itens estejam carregados
+     */
     public void deletar(Long id) {
-        Optional<Venda> vendaOpt = vendaRepository.findById(id);
+        Optional<Venda> vendaOpt = vendaRepository.findByIdWithItens(id);
         if (vendaOpt.isPresent()) {
             Venda venda = vendaOpt.get();
             
+            System.out.println("️ Deletando venda ID: " + id);
+            
             // REVERTER O ESTOQUE ao deletar/cancelar venda
-            if (venda.getItens() != null) {
+            if (venda.getItens() != null && !venda.getItens().isEmpty()) {
                 for (ItemVendas item : venda.getItens()) {
                     Estoque estoque = item.getEstoque();
                     if (estoque != null) {
@@ -258,12 +367,18 @@ public class VendaService {
                         int novaQuantidade = estoque.getQuantidadeDisponivel() + quantidadeDevolvida;
                         estoque.setQuantidadeDisponivel(novaQuantidade);
                         estoqueRepository.save(estoque);
+                        
+                        System.out.println("Estoque revertido: " + estoque.getMarcaModelo() + 
+                                         " | Quantidade devolvida: " + quantidadeDevolvida);
                     }
                 }
             }
             
             venda.setAtivo(false);
             vendaRepository.save(venda);
+            System.out.println("Venda deletada com sucesso");
+        } else {
+            throw new RuntimeException("Venda não encontrada com ID: " + id);
         }
     }
 }

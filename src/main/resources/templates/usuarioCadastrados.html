@@ -16,8 +16,6 @@
                 background-color: #f5f6fa;
                 font-family: 'Segoe UI', sans-serif;
             }
-
-            /* ===== SIDEBAR ===== */
             .sidebar {
                 width: 250px;
                 background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
@@ -66,8 +64,6 @@
                 background-color: #fc0808;
                 color: #fff;
             }
-
-            /* ===== MAIN CONTENT ===== */
             .content {
                 margin-left: 250px;
                 padding: 40px;
@@ -93,8 +89,6 @@
                 color: #333;
                 margin-bottom: 30px;
             }
-
-            /* ===== Responsividade ===== */
             @media (max-width: 992px) {
                 .sidebar {
                     width: 100%;
@@ -185,7 +179,6 @@
     </head>
 
     <body>
-        <!-- ===== SIDEBAR ===== -->
         <nav class="sidebar">
             <div>
                 <a class="navbar-brand" href="/index">GestorX</a>
@@ -199,6 +192,19 @@
                     <li class="nav-item"><a class="nav-link" href="/clienteCadastrados">Clientes</a></li>
                     <li class="nav-item"><a class="nav-link" href="/fornecedorCadastrados">Fornecedores</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/usuarioCadastrados">Usuários</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownRelatorios" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownRelatorios">
+                            <li>
+                                <a class="dropdown-item" href="/relatorio/vendas/pdf" target="_blank">
+                                    Relatório de Vendas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
             <div class="px-3 mb-3">
@@ -207,8 +213,6 @@
                 </form>
             </div>
         </nav>
-
-        <!-- ===== MAIN CONTENT ===== -->
         <div class="content">
             <div class="container">
                 <div class="card shadow mb-4">
@@ -226,7 +230,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Nome</th>
-                                        <th>Login</th>
                                         <th>Email</th>
                                         <th colspan="2" style="white-space: nowrap;">Ações</th>
                                     </tr>

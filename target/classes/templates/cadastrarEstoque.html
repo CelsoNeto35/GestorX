@@ -17,8 +17,6 @@
             background-color: #f5f6fa;
             font-family: 'Segoe UI', sans-serif;
         }
-
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
@@ -67,8 +65,6 @@
             background-color: #fc0808;
             color: #fff;
         }
-
-        /* ===== MAIN CONTENT ===== */
         .content {
             margin-left: 250px;
             padding: 40px;
@@ -78,40 +74,197 @@
         .card {
             border: none;
             border-radius: 15px;
+            background: #fff;
         }
 
         .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
+            background: transparent;
+            border: none;
+            padding: 25px 30px 10px;
         }
 
         .card.shadow {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-body {
+            padding: 20px 30px 30px;
         }
 
         h5 {
             font-weight: 600;
-            color: #333;
+            color: #1a1a1a;
+            font-size: 1.4rem;
+            margin-bottom: 0;
+        }
+
+        /* Estilos Minimalistas dos Inputs */
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control,
+        .form-select {
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            border-radius: 0;
+            padding: 10px 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: transparent;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: none;
+            border-bottom-color: #000;
+            background: transparent;
+        }
+
+        .form-control::placeholder {
+            color: #bbb;
+            font-size: 0.95rem;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+        /* Seções do Formulário */
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Botões Minimalistas */
+        .btn-minimal {
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .btn-minimal-danger {
+            border: 2px solid #dc3545;
+            background: transparent;
+            color: #dc3545;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .profit-info {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+            color: #28a745;
         }
 
         @media (max-width: 992px) {
-            .sidebar { width: 100%; height: auto; position: relative; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 10px 20px; }
-            .sidebar ul { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 0; }
-            .sidebar .nav-item { margin: 5px; }
-            .content { margin-left: 0; width: 100%; padding: 20px; }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 20px;
+            }
+
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 0;
+            }
+
+            .sidebar .nav-item {
+                margin: 5px;
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
         }
 
         @media (max-width: 576px) {
-            .sidebar { flex-direction: column; align-items: center; text-align: center; }
-            .sidebar ul { flex-direction: column; padding: 0; }
-            .sidebar .nav-item { width: 100%; }
-            .btn-lg { width: 100%; }
+            .sidebar {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .sidebar ul {
+                flex-direction: column;
+                padding: 0;
+            }
+
+            .sidebar .nav-item {
+                width: 100%;
+            }
+
+            .btn-minimal,
+            .btn-minimal-danger {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- ===== SIDEBAR ===== -->
     <nav class="sidebar">
         <div>
             <a class="navbar-brand" href="/index">GestorX</a>
@@ -125,6 +278,19 @@
                 <li class="nav-item"><a class="nav-link" href="/clienteCadastrados">Clientes</a></li>
                 <li class="nav-item"><a class="nav-link" href="/fornecedorCadastrados">Fornecedores</a></li>
                 <li class="nav-item"><a class="nav-link" href="/usuarioCadastrados">Usuários</a></li>
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownRelatorios" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownRelatorios">
+                            <li>
+                                <a class="dropdown-item" href="/relatorio/vendas/pdf" target="_blank">
+                                    Relatório de Vendas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
             </ul>
         </div>
         <div class="px-3 mb-3">
@@ -134,113 +300,151 @@
         </div>
     </nav>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <div class="content">
-        <div class="container">
+        <div class="container-fluid">
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h5 class="mb-0 text-dark">Cadastro de Estoque</h5>
+                <div class="card-header">
+                    <h5>Cadastro de Estoque</h5>
                 </div>
 
                 <div class="card-body">
                     <form th:method="post" th:action="@{/estoque}" th:object="${estoque}">
                         <input type="hidden" th:field="*{id}" />
 
-                        <div class="form-group mb-3">
-                            <label for="produtoId">Produto *</label>
-                            <select id="produtoId" th:field="*{produtoId}" class="form-select form-select-lg" required>
-                                <option value="" selected>Selecione um produto</option>
-                                <option th:each="produto : ${produtos}" th:value="${produto.id}" th:text="${produto.descricao}"></option>
-                            </select>
+                        <!-- Identificação do Produto -->
+                        <div class="form-section">
+                            <div class="section-title">Identificação do Produto</div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="produtoId" class="form-label">Produto *</label>
+                                    <div class="input-icon">
+                                        <select id="produtoId" th:field="*{produtoId}" class="form-select" required>
+                                            <option value="" selected>Selecione um produto</option>
+                                            <option th:each="produto : ${produtos}" th:value="${produto.id}" th:text="${produto.descricao}"></option>
+                                        </select>
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="categoria" class="form-label">Categoria *</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="categoria" th:field="*{categoria}" class="form-control" placeholder="Digite a categoria" required />
+                                        <i class="bi bi-tag"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="marcaModelo" class="form-label">Marca / Modelo *</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="marcaModelo" th:field="*{marcaModelo}" class="form-control" placeholder="Digite a marca ou modelo" required />
+                                        <i class="bi bi-award"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="categoria">Categoria *</label>
-                            <input type="text" id="categoria" th:field="*{categoria}" class="form-control form-control-lg" required />
+                        <!-- Controle de Estoque -->
+                        <div class="form-section">
+                            <div class="section-title">Controle de Estoque</div>
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label for="quantidadeDisponivel" class="form-label">Quantidade Disponível *</label>
+                                    <div class="input-icon">
+                                        <input type="number" id="quantidadeDisponivel" th:field="*{quantidadeDisponivel}" class="form-control" placeholder="0" required />
+                                        <i class="bi bi-123"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="lote" class="form-label">Lote *</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="lote" th:field="*{lote}" class="form-control" placeholder="Digite o lote" required />
+                                        <i class="bi bi-upc-scan"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="validade" class="form-label">Validade</label>
+                                    <div class="input-icon">
+                                        <input type="date" id="validade" th:field="*{validade}" class="form-control" />
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="marcaModelo">Marca / Modelo *</label>
-                            <input type="text" id="marcaModelo" th:field="*{marcaModelo}" class="form-control form-control-lg" required />
+                        <!-- Precificação -->
+                        <div class="form-section">
+                            <div class="section-title">Precificação</div>
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label for="precoDeCusto" class="form-label">Preço de Custo *</label>
+                                    <div class="input-icon">
+                                        <input type="number" step="0.01" id="precoDeCusto" th:field="*{precoDeCusto}" class="form-control" placeholder="0.00" required />
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="precoDeVenda" class="form-label">Preço de Venda *</label>
+                                    <div class="input-icon">
+                                        <input type="number" step="0.01" id="precoDeVenda" th:field="*{precoDeVenda}" class="form-control" placeholder="0.00" required />
+                                        <i class="bi bi-cash-coin"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="margemDeLucro" class="form-label">Margem de Lucro (%)</label>
+                                    <div class="input-icon">
+                                        <input type="number" step="0.01" id="margemDeLucro" th:field="*{margemDeLucro}" class="form-control" placeholder="0.00" readonly />
+                                        <i class="bi bi-percent"></i>
+                                    </div>
+                                    <small id="profitInfo" class="profit-info"></small>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="quantidadeDisponivel">Quantidade Disponível *</label>
-                            <input type="number" id="quantidadeDisponivel" th:field="*{quantidadeDisponivel}" class="form-control form-control-lg" required />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="lote">Lote *</label>
-                            <input type="text" id="lote" th:field="*{lote}" class="form-control form-control-lg" required />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="validade">Validade</label>
-                            <input type="date" id="validade" th:field="*{validade}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="precoDeCusto">Preço de Custo *</label>
-                            <input type="number" step="0.01" id="precoDeCusto" th:field="*{precoDeCusto}" class="form-control form-control-lg" required />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="precoDeVenda">Preço de Venda *</label>
-                            <input type="number" step="0.01" id="precoDeVenda" th:field="*{precoDeVenda}" class="form-control form-control-lg" required />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="margemDeLucro">Margem de Lucro (%)</label>
-                            <input type="number" step="0.01" id="margemDeLucro" th:field="*{margemDeLucro}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="pt-1 mb-4 d-flex gap-2 flex-wrap">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                        <!-- Botões -->
+                        <div class="d-flex gap-3 flex-wrap mt-4">
+                            <button type="submit" class="btn btn-minimal">
                                 <i class="bi bi-check-circle"></i> Salvar
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-lg"
-                                    data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
+                            <button type="button" class="btn btn-minimal-danger" data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
                                 <i class="bi bi-x-circle"></i> Cancelar
                             </button>
                         </div>
                     </form>
 
-                    <!-- Mensagem de erro -->
-                    <div th:if="${param.erro}" class="alert alert-danger mt-3" role="alert">
-                        Erro ao realizar cadastro do estoque!
+                    <!-- Mensagens -->
+                    <div th:if="${param.erro}" class="alert alert-danger mt-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Erro ao realizar cadastro do estoque!
                     </div>
 
-                    <!-- Mensagem de sucesso -->
-                    <div th:if="${param.sucesso}" class="alert alert-success mt-3" role="alert">
-                        Estoque cadastrado com sucesso!
+                    <div th:if="${param.sucesso}" class="alert alert-success mt-4" role="alert">
+                        <i class="bi bi-check-circle-fill"></i> Estoque cadastrado com sucesso!
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de confirmação -->
-    <div class="modal fade" id="confirmCancelModal" tabindex="-1"
-         aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="confirmCancelModalLabel">Confirmar Cancelamento</h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     Tem certeza de que deseja cancelar o cadastro?<br>
                     Todas as alterações serão descartadas.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Voltar
-                    </button>
-                    <a class="btn btn-danger" th:href="@{/estoqueCadastrados}">
-                        Sim, cancelar
-                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <a class="btn btn-danger" th:href="@{/estoqueCadastrados}">Sim, cancelar</a>
                 </div>
             </div>
         </div>
@@ -248,5 +452,55 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script de Cálculo Automático de Margem -->
+    <script>
+        const precoCusto = document.getElementById('precoDeCusto');
+        const precoVenda = document.getElementById('precoDeVenda');
+        const margemLucro = document.getElementById('margemDeLucro');
+        const profitInfo = document.getElementById('profitInfo');
+
+        function calcularMargem() {
+            const custo = parseFloat(precoCusto.value) || 0;
+            const venda = parseFloat(precoVenda.value) || 0;
+
+            if (custo > 0 && venda > 0) {
+                const margem = ((venda - custo) / custo * 100).toFixed(2);
+                const lucro = (venda - custo).toFixed(2);
+                
+                margemLucro.value = margem;
+                
+                if (margem > 0) {
+                    profitInfo.textContent = `Lucro: R$ ${lucro} por unidade`;
+                    profitInfo.style.color = '#28a745';
+                } else if (margem < 0) {
+                    profitInfo.textContent = `Prejuízo: R$ ${Math.abs(lucro)} por unidade`;
+                    profitInfo.style.color = '#dc3545';
+                } else {
+                    profitInfo.textContent = 'Sem lucro ou prejuízo';
+                    profitInfo.style.color = '#ffc107';
+                }
+            } else {
+                margemLucro.value = '';
+                profitInfo.textContent = '';
+            }
+        }
+
+        precoCusto.addEventListener('input', calcularMargem);
+        precoVenda.addEventListener('input', calcularMargem);
+
+        // Formatação de moeda ao sair do campo
+        function formatarMoeda(input) {
+            input.addEventListener('blur', function() {
+                if (this.value) {
+                    const valor = parseFloat(this.value);
+                    this.value = valor.toFixed(2);
+                }
+            });
+        }
+
+        formatarMoeda(precoCusto);
+        formatarMoeda(precoVenda);
+    </script>
 </body>
 </html>

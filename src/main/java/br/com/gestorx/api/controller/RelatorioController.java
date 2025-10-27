@@ -42,11 +42,11 @@ public class RelatorioController {
             conexao = dataSource.getConnection();
             System.out.println("Conexão obtida com sucesso");
             
-            // 2. Carregar e COMPILAR o arquivo .jrxml
+            // 2. Carregar e compilar o arquivo .jrxml (TEMPORÁRIO até recompilar o .jasper)
             InputStream jrxmlStream = new ClassPathResource("Relatorios/RelatorioVenda.jrxml").getInputStream();
             System.out.println("Arquivo jrxml carregado");
             
-            // 3. Compilar o relatório
+            // 3. Compilar o relatório (ignorando atributos uuid)
             JasperReport jasperReport = JasperCompileManager.compileReport(jrxmlStream);
             System.out.println("Relatório compilado com sucesso");
             

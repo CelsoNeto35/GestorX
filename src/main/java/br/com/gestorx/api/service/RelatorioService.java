@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Map;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
 public class RelatorioService {
@@ -20,18 +21,44 @@ public class RelatorioService {
         Connection conexao = null;
         
         try {
+            System.out.println("=== INICIANDO GERAÇÃO DO RELATÓRIO (SERVICE) ===");
+            
+            // 1. Obter conexão com o banco
             conexao = dataSource.getConnection();
+            System.out.println("Conexão obtida com sucesso");
             
-            // CAMINHO CORRIGIDO: Relatorios com R maiúsculo
+            // 2. Carregar o arquivo .jasper PRÉ-COMPILADO
             InputStream jasperStream = new ClassPathResource("Relatorios/RelatorioVenda.jasper").getInputStream();
+            System.out.println("Arquivo jasper carregado");
             
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperStream, parametros, conexao);
+            // 3. Carregar o relatório compilado
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperStream);
+            System.out.println("Relatório carregado com sucesso");
             
-            return JasperExportManager.exportReportToPdf(jasperPrint);
+            System.out.println("Parâmetros recebidos: " + parametros);
             
+            // 4. Preencher o relatório
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, conexao);
+            System.out.println("Relatório preenchido");
+            
+            // 5. Exportar para PDF
+            byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+            System.out.println("PDF gerado com sucesso. Tamanho: " + pdfBytes.length + " bytes");
+            
+            return pdfBytes;
+            
+        } catch (Exception e) {
+            System.err.println("=== ERRO AO GERAR RELATÓRIO (SERVICE) ===");
+            e.printStackTrace();
+            throw e;
         } finally {
             if (conexao != null) {
-                conexao.close();
+                try {
+                    conexao.close();
+                    System.out.println("Conexão fechada");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

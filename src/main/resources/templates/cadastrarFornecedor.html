@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastro de Fornecedor - GestorX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap & Icons -->
+    <!-- Bootstrap e Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -16,8 +17,6 @@
             background-color: #f5f6fa;
             font-family: 'Segoe UI', sans-serif;
         }
-
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
@@ -66,8 +65,6 @@
             background-color: #fc0808;
             color: #fff;
         }
-
-        /* ===== MAIN CONTENT ===== */
         .content {
             margin-left: 250px;
             padding: 40px;
@@ -77,24 +74,131 @@
         .card {
             border: none;
             border-radius: 15px;
+            background: #fff;
         }
 
         .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
+            background: transparent;
+            border: none;
+            padding: 25px 30px 10px;
         }
 
         .card.shadow {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        h3.dashboard-title {
+        .card-body {
+            padding: 20px 30px 30px;
+        }
+
+        h5 {
             font-weight: 600;
-            color: #333;
-            margin-bottom: 30px;
+            color: #1a1a1a;
+            font-size: 1.4rem;
+            margin-bottom: 0;
         }
 
-        /* ===== Responsividade ===== */
+        /* Estilos Minimalistas dos Inputs */
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            border: none;
+            border-bottom: 2px solid #e0e0e0;
+            border-radius: 0;
+            padding: 10px 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: transparent;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-bottom-color: #000;
+            background: transparent;
+        }
+
+        .form-control::placeholder {
+            color: #bbb;
+            font-size: 0.95rem;
+        }
+
+        /* Seções do Formulário */
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Botões Minimalistas */
+        .btn-minimal {
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .btn-minimal-danger {
+            border: 2px solid #dc3545;
+            background: transparent;
+            color: #dc3545;
+            padding: 12px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .btn-minimal-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        #cnpjFeedback {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 100%;
@@ -140,12 +244,17 @@
             .sidebar .nav-item {
                 width: 100%;
             }
+
+            .btn-minimal,
+            .btn-minimal-danger {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- ===== SIDEBAR ===== -->
     <nav class="sidebar">
         <div>
             <a class="navbar-brand" href="/index">GestorX</a>
@@ -159,6 +268,19 @@
                 <li class="nav-item"><a class="nav-link" href="/clienteCadastrados">Clientes</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/fornecedorCadastrados">Fornecedores</a></li>
                 <li class="nav-item"><a class="nav-link" href="/usuarioCadastrados">Usuários</a></li>
+                <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownRelatorios" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownRelatorios">
+                            <li>
+                                <a class="dropdown-item" href="/relatorio/vendas/pdf" target="_blank">
+                                    Relatório de Vendas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
             </ul>
         </div>
         <div class="px-3 mb-3">
@@ -168,104 +290,139 @@
         </div>
     </nav>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <div class="content">
-        <div class="container">
+        <div class="container-fluid">
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h5 class="mb-0 fw-bold text-dark">Cadastro de Fornecedor</h5>
+                <div class="card-header">
+                    <h5>Cadastro de Fornecedor</h5>
                 </div>
+
                 <div class="card-body">
                     <form th:method="post" th:action="@{/fornecedor}" th:object="${fornecedor}">
                         <input type="hidden" th:field="*{id}" />
 
-                        <div class="form-group mb-3">
-                            <label for="razaoSocial">Razão Social *</label>
-                            <input type="text" id="razaoSocial" th:field="*{razaoSocial}" class="form-control form-control-lg" required />
+                        <!-- Dados Principais -->
+                        <div class="form-section">
+                            <div class="section-title">Dados Principais</div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="razaoSocial" class="form-label">Razão Social *</label>
+                                    <input type="text" id="razaoSocial" th:field="*{razaoSocial}" class="form-control" placeholder="Digite a razão social" required />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="nomeFantasia" class="form-label">Nome Fantasia</label>
+                                    <input type="text" id="nomeFantasia" th:field="*{nomeFantasia}" class="form-control" placeholder="Digite o nome fantasia" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="nomeFantasia">Nome Fantasia</label>
-                            <input type="text" id="nomeFantasia" th:field="*{nomeFantasia}" class="form-control form-control-lg" />
+                        <!-- Documentação -->
+                        <div class="form-section">
+                            <div class="section-title">Documentação</div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="cnpj" class="form-label">CNPJ</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="cnpj" th:field="*{cnpj}" class="form-control" placeholder="00.000.000/0000-00" maxlength="18" />
+                                        <i class="bi bi-card-text"></i>
+                                    </div>
+                                    <small id="cnpjFeedback"></small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="insEstadual" class="form-label">Inscrição Estadual</label>
+                                    <input type="text" id="insEstadual" th:field="*{insEstadual}" class="form-control" placeholder="Digite a inscrição estadual" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="dataDeCadastro" class="form-label">Data de Cadastro</label>
+                                    <input type="date" id="dataDeCadastro" th:field="*{dataDeCadastro}" class="form-control" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="cnpj">CNPJ</label>
-                            <input type="text" id="cnpj" th:field="*{cnpj}" class="form-control form-control-lg" />
+                        <!-- Contato -->
+                        <div class="form-section">
+                            <div class="section-title">Contato</div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <div class="input-icon">
+                                        <input type="text" id="telefone" th:field="*{telefone}" class="form-control" placeholder="(00) 00000-0000" />
+                                        <i class="bi bi-telephone"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <div class="input-icon">
+                                        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="email@exemplo.com" />
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="insEstadual">Inscrição Estadual</label>
-                            <input type="text" id="insEstadual" th:field="*{insEstadual}" class="form-control form-control-lg" />
+                        <!-- Endereço -->
+                        <div class="form-section">
+                            <div class="section-title">Endereço</div>
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <label for="cep" class="form-label">CEP</label>
+                                    <input type="text" id="cep" th:field="*{cep}" class="form-control" placeholder="00000-000" />
+                                </div>
+
+                                <div class="col-md-7">
+                                    <label for="ruaLogradouro" class="form-label">Rua / Logradouro</label>
+                                    <input type="text" id="ruaLogradouro" th:field="*{ruaLogradouro}" class="form-control" placeholder="Digite a rua" />
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label for="numero" class="form-label">Número</label>
+                                    <input type="text" id="numero" th:field="*{numero}" class="form-control" placeholder="Nº" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="complemento" class="form-label">Complemento</label>
+                                    <input type="text" id="complemento" th:field="*{complemento}" class="form-control" placeholder="Sala, galpão, etc." />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" id="bairro" th:field="*{bairro}" class="form-control" placeholder="Digite o bairro" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" id="cidade" th:field="*{cidade}" class="form-control" placeholder="Digite a cidade" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="estado" class="form-label">Estado</label>
+                                    <input type="text" id="estado" th:field="*{estado}" class="form-control" placeholder="Digite o estado" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="pais" class="form-label">País</label>
+                                    <input type="text" id="pais" th:field="*{pais}" class="form-control" placeholder="Brasil" value="Brasil" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="dataDeCadastro">Data de Cadastro</label>
-                            <input type="date" id="dataDeCadastro" th:field="*{dataDeCadastro}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="telefone">Telefone</label>
-                            <input type="text" id="telefone" th:field="*{telefone}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="email">E-mail</label>
-                            <input type="email" id="email" th:field="*{email}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="cep">CEP</label>
-                            <input type="text" id="cep" th:field="*{cep}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="ruaLogradouro">Rua / Logradouro</label>
-                            <input type="text" id="ruaLogradouro" th:field="*{ruaLogradouro}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="numero">Número</label>
-                            <input type="text" id="numero" th:field="*{numero}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="complemento">Complemento</label>
-                            <input type="text" id="complemento" th:field="*{complemento}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="bairro">Bairro</label>
-                            <input type="text" id="bairro" th:field="*{bairro}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="cidade">Cidade</label>
-                            <input type="text" id="cidade" th:field="*{cidade}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="estado">Estado</label>
-                            <input type="text" id="estado" th:field="*{estado}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="pais">País</label>
-                            <input type="text" id="pais" th:field="*{pais}" class="form-control form-control-lg" />
-                        </div>
-
-                        <div class="pt-1 mb-4 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                        <!-- Botões -->
+                        <div class="d-flex gap-3 flex-wrap mt-4">
+                            <button type="submit" class="btn btn-minimal">
                                 <i class="bi bi-check-circle"></i> Salvar
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
+                            <button type="button" class="btn btn-minimal-danger" data-bs-toggle="modal" data-bs-target="#confirmCancelModal">
                                 <i class="bi bi-x-circle"></i> Cancelar
                             </button>
                         </div>
                     </form>
 
-                    <div th:if="${param.erro}" class="alert alert-danger mt-3" role="alert">
+                    <div th:if="${param.erro}" class="alert alert-danger mt-4" role="alert">
                         Erro ao realizar cadastro do fornecedor!
                     </div>
                 </div>
@@ -273,7 +430,7 @@
         </div>
     </div>
 
-    <!-- ===== MODAL CONFIRMAÇÃO ===== -->
+    <!-- Modal de Confirmação -->
     <div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-labelledby="confirmCancelModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -295,5 +452,53 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/buscarCep.js}"></script>
+    <!-- Script de Formatação CNPJ, Telefone e CEP -->
+    <script>
+        const cnpjInput = document.getElementById('cnpj');
+        const feedback = document.getElementById('cnpjFeedback');
+        const telefoneInput = document.getElementById('telefone');
+        const cepInput = document.getElementById('cep');
+
+        // Formatação de CNPJ
+        cnpjInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Formato CNPJ: 00.000.000/0000-00
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            
+            feedback.textContent = 'CNPJ';
+            feedback.style.color = '#0d6efd';
+            
+            e.target.value = value;
+        });
+
+        // Formatação de Telefone
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length <= 10) {
+                // Formato: (00) 0000-0000
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            } else {
+                // Formato: (00) 00000-0000
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            
+            e.target.value = value;
+        });
+
+        // Formatação de CEP
+        cepInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    </script>
 </body>
 </html>
